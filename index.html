@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AlpTools Index</title>
+    <style>
+      :root {
+        --bg: #0f172a;
+        --panel: #111827;
+        --panel-alt: #1f2937;
+        --text: #e5e7eb;
+        --muted: #9ca3af;
+        --accent: #38bdf8;
+        --accent-strong: #0ea5e9;
+        --border: rgba(148, 163, 184, 0.2);
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background: linear-gradient(135deg, #020817, #0f172a 35%, #111827);
+        color: var(--text);
+      }
+
+      .container {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 48px 20px 80px;
+      }
+
+      h1 {
+        margin: 0 0 12px;
+        font-size: clamp(2.2rem, 3vw, 3rem);
+      }
+
+      .subtitle {
+        color: var(--muted);
+        font-size: 1.05rem;
+        margin-bottom: 32px;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 20px;
+      }
+
+      .card {
+        display: block;
+        text-decoration: none;
+        color: var(--text);
+        background: rgba(17, 24, 39, 0.9);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 22px 20px;
+        transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.28);
+      }
+
+      .card:hover {
+        transform: translateY(-2px);
+        border-color: rgba(56, 189, 248, 0.7);
+        box-shadow: 0 16px 28px rgba(14, 165, 233, 0.18);
+      }
+
+      .tag {
+        display: inline-block;
+        background: rgba(14, 165, 233, 0.12);
+        border: 1px solid rgba(56, 189, 248, 0.4);
+        color: var(--accent);
+        border-radius: 999px;
+        padding: 6px 10px;
+        font-size: 0.75rem;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        margin-bottom: 12px;
+      }
+
+      .card h2 {
+        margin: 0 0 10px;
+        font-size: 1.4rem;
+      }
+
+      .card p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.5;
+      }
+
+      .footer {
+        margin-top: 36px;
+        color: var(--muted);
+        font-size: 0.92rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>AlpTools</h1>
+      <p class="subtitle">Quick access to the HTML tools in this GitHub repo.</p>
+
+      <div class="grid">
+        <a class="card" href="folder-structure-generatorv3.html">
+          <span class="tag">HTML Tool</span>
+          <h2>Folder Structure Generator</h2>
+          <p>Create and visualize folder structures for projects and repositories.</p>
+        </a>
+
+        <a class="card" href="libinsight-notes-builder.html">
+          <span class="tag">HTML Tool</span>
+          <h2>LibInsight Notes Builder</h2>
+          <p>Build and organize notes and content for LibInsight workflows.</p>
+        </a>
+
+        <a class="card" href="README.md">
+          <span class="tag">Repo</span>
+          <h2>Project README</h2>
+          <p>Open the repository overview and context for the tools in this project.</p>
+        </a>
+      </div>
+
+      <p class="footer">Use this page as a landing screen for browsing the HTML files in the repository.</p>
+    </div>
+  </body>
+</html>
