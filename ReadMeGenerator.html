@@ -11,7 +11,7 @@
   Carleton University / MacOdrum Library — README Generator
   ============================================================================
   This tool is adapted for Carleton University by MacOdrum Library's
-  Research Data Management Services. It is based on the McMaster University
+  Data Services Team. It is based on the McMaster University
   README Generator (rdm.mcmaster.ca/readme), developed by Richie Motorgeanu,
   Debbie Lawlor, Rebeca Gaston Jothyraj, Danica Evering, and Isaac Pratt
   (McMaster University Research Data Management), made available under a
@@ -850,7 +850,7 @@
   <div class="site-footer__inner">
     <img class="site-footer__logo" src="assets/MacObrand.png" alt="AlpTools brand logo">
     <p class="site-footer__credit">
-      This README Generator has been adapted for <strong>Carleton University</strong> by MacOdrum Library's Research Data Management Services.
+      This README Generator has been adapted for <strong>Carleton University</strong> by MacOdrum Library's Data Services Team.
       It is based on the <strong><a href="https://rdm.mcmaster.ca/readme" target="_blank" rel="noopener">McMaster University README Generator</a></strong>, developed by Richie Motorgeanu, Debbie Lawlor, Rebeca Gaston Jothyraj, Danica Evering, and Isaac Pratt (McMaster University Research Data Management), and made available under a
       <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">Creative Commons Attribution 4.0 (CC BY 4.0)</a> license. The original tool was in turn inspired by the Cornell University guide to writing readme-style metadata and the
       <a href="https://citation-file-format.github.io/cffinit/" target="_blank" rel="noopener">Citation File Format initializer (cffinit)</a>. This adaptation carries the same CC BY 4.0 license and this whole page may be freely downloaded, copied, and reused.
@@ -1040,7 +1040,7 @@ function buildReadme(){
 
   let out = '';
   out += '#'.repeat(100) + '\n';
-  out += `${title.toUpperCase()} - This README file was generated on ${today} using Carleton University's README Generator (MacOdrum Library, Research Data Management)\n`;
+  out += `${title.toUpperCase()} - This README file was generated on ${today} using Carleton University's README Generator \n`;
   out += '#'.repeat(100) + '\n';
   out += rule + '\n\n';
 
@@ -1092,7 +1092,7 @@ function buildReadme(){
   }
 
   out += rule + '\n';
-  out += `This README was generated using Carleton University's README Generator, MacOdrum Library, Research Data Management. Adapted from the McMaster University README Generator (CC BY 4.0), itself inspired by Cornell University's guide to writing readme-style metadata.\n`;
+  out += `This README was generated using Carleton University's README Generator, MacOdrum Library, Data Services. Adapted from the McMaster University README Generator (CC BY 4.0), itself inspired by Cornell University's guide to writing readme-style metadata.\n`;
 
   return out;
 }
