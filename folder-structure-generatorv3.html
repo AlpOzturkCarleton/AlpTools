@@ -70,6 +70,21 @@
     text-align: center;
   }
 
+  .brand-row{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 18px;
+  }
+
+  .brand-logo{
+    display: block;
+    width: clamp(160px, 24vw, 240px);
+    height: auto;
+    max-width: 100%;
+    filter: drop-shadow(0 8px 18px rgba(34, 26, 28, 0.12));
+  }
+
   .eyebrow{
     font-family: var(--font-mono);
     font-size: 12px;
@@ -335,7 +350,7 @@
   .tree-editor{
     border: 1px solid var(--line);
     border-left: 3px solid var(--red);
-    background: var(--bg-deep);
+    background: var(--bg-deep); 
     padding: 10px 8px;
     min-height: 460px;
     overflow-y: auto;
@@ -433,8 +448,14 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 10px;
+    gap: 12px;
   }
   .command-header{ margin-top: 24px; }
+
+  .btn-solid.btn-small{
+    padding: 6px 10px;
+    font-size: 10.5px;
+  }
 
   .command-actions{
     display: flex;
@@ -524,6 +545,9 @@
 <body>
 
 <header>
+  <div class="brand-row">
+    <img class="brand-logo" src="assets/MacObrand.png" alt="AlpTools brand logo">
+  </div>
   <h1>Folder Structure Generator <span class="accent">Tool</span></h1>
   <p class="sub">Design a folder structure once, then generate a ready-to-run Terminal or PowerShell command that builds it anywhere.</p>
   <svg class="wave-divider" viewBox="0 0 340 14" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -610,6 +634,7 @@
 
     <div class="preview-header">
       <h2>Structure preview</h2>
+      <button id="copyTreeBtn" class="btn-solid btn-small" type="button">Copy tree</button>
     </div>
     <pre id="treePreview" class="tree-preview"></pre>
 
@@ -643,11 +668,11 @@
     return { id: nextId(), name: name, type: type, children: type === 'folder' ? [] : undefined };
   }
 
-  // ---- default tree ----
+  // ---- default stree ----
   const tree = {
     id: 'root', name: 'research-project', type: 'folder',
     children: [
-      newNode('README.md', 'file'),
+      newNode('README.txt', 'file'),
       newNode('docs', 'folder'),
       newNode('data_collection', 'folder'),
       (function(){
@@ -681,6 +706,7 @@
   const pathHintEl = document.getElementById('pathHint');
   const cmdLabelEl = document.getElementById('cmdLabel');
   const copyBtn = document.getElementById('copyBtn');
+  const copyTreeBtn = document.getElementById('copyTreeBtn');
   const copyHelpBtn = document.getElementById('copyHelpBtn');
   const copyHelpText = document.getElementById('copyHelpText');
 
@@ -1052,15 +1078,14 @@
 
   basePathEl.addEventListener('input', updateOutputs);
 
-  copyBtn.addEventListener('click', function(){
-    const text = commandOutputEl.textContent;
+  function copyText(text, buttonEl, successText){
     function showCopied(){
-      const original = copyBtn.textContent;
-      copyBtn.textContent = 'Copied!';
-      copyBtn.classList.add('copied');
+      const original = buttonEl.textContent;
+      buttonEl.textContent = successText;
+      buttonEl.classList.add('copied');
       setTimeout(function(){
-        copyBtn.textContent = original;
-        copyBtn.classList.remove('copied');
+        buttonEl.textContent = original;
+        buttonEl.classList.remove('copied');
       }, 1400);
     }
     if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -1070,6 +1095,14 @@
     } else {
       fallbackCopy(text, showCopied);
     }
+  }
+
+  copyBtn.addEventListener('click', function(){
+    copyText(commandOutputEl.textContent, copyBtn, 'Copied!');
+  });
+
+  copyTreeBtn.addEventListener('click', function(){
+    copyText(treePreviewEl.textContent, copyTreeBtn, 'Copied!');
   });
 
   function fallbackCopy(text, cb){

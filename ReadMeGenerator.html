@@ -1,0 +1,1281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>README Generator | Research Data Management | Carleton University</title>
+<meta name="description" content="Build a well-structured README file for your research dataset, offline, entirely in your browser.">
+
+<!--
+  ============================================================================
+  Carleton University / MacOdrum Library — README Generator
+  ============================================================================
+  This tool is adapted for Carleton University by MacOdrum Library's
+  Research Data Management Services. It is based on the McMaster University
+  README Generator (rdm.mcmaster.ca/readme), developed by Richie Motorgeanu,
+  Debbie Lawlor, Rebeca Gaston Jothyraj, Danica Evering, and Isaac Pratt
+  (McMaster University Research Data Management), made available under a
+  Creative Commons Attribution 4.0 International (CC BY 4.0) licence. The
+  original tool was in turn inspired by the Cornell University "Guide to
+  writing readme-style metadata" and the Citation File Format initializer
+  (cffinit, citation-file-format.github.io/cffinit). This adaptation, and any
+  modifications made to it, are shared under the same CC BY 4.0 licence.
+
+  This file is fully self-contained: no external stylesheets, fonts,
+  scripts, or network requests are required. Save/download this single
+  .html file and open it in any modern browser to run the generator
+  completely offline. Nothing you type is sent anywhere — it stays in your
+  browser's memory until you close the tab, unless you use "Save draft"
+  to download it to your own computer.
+  ============================================================================
+-->
+
+<style>
+  /*
+    Publico is Carleton University's brand typeface. It is a licensed,
+    commercial font and its files are not redistributed here — if it is
+    installed on your computer, it will be used automatically; otherwise
+    the tool falls back to a comparable serif so the page always renders
+    correctly offline without any external font requests.
+  */
+  :root{
+    --red:#e91c24;
+    --black:#000000;
+    --white:#ffffff;
+    --carleton-red:#e91c24;
+    --carleton-red-dark:#b1141b;
+    --ink:#000000;
+    --paper:#ffffff;
+    --panel:#ffffff;
+    --line:#f0c9cb;
+    --grey:#1d1d1d;
+    --grey-light:#666666;
+    --mono-bg:#000000;
+    --mono-fg:#ffffff;
+    --ok:#0a8a2e;
+    --focus:#e91c24;
+    --radius:2px;
+    --serif: Publico, "Publico Text", Georgia, "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Palatino, serif;
+    --sans: Arial, Helvetica, "Segoe UI", sans-serif;
+    --mono: ui-monospace, "Cascadia Mono", "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--serif);
+    line-height:1.5;
+  }
+  h1,h2,h3{
+    font-family:var(--serif);
+    font-weight:700;
+    color:var(--ink);
+    letter-spacing:-0.01em;
+  }
+  a{color:var(--carleton-red-dark);}
+  a:focus-visible, button:focus-visible, textarea:focus-visible, input:focus-visible, [tabindex]:focus-visible{
+    outline:3px solid var(--focus);
+    outline-offset:2px;
+  }
+  button{font-family:var(--sans);}
+
+  /* ===== Header ===== */
+  .site-header{
+    background:var(--white);
+    border-bottom:5px solid var(--carleton-red);
+  }
+  .site-header__inner{
+    max-width:1180px;
+    margin:0 auto;
+    padding:16px 24px;
+    display:flex;
+    align-items:center;
+    gap:18px;
+    flex-wrap:wrap;
+  }
+  .site-header__logo{
+    height:46px;
+    width:auto;
+    display:block;
+    flex:none;
+  }
+  .site-header__divider{
+    width:1px;
+    align-self:stretch;
+    background:#d9d3cf;
+    margin:2px 4px;
+  }
+  .site-header__service{
+    font-family:var(--sans);
+    font-size:1.15rem;
+    color:var(--grey);
+    line-height:1.2;
+  }
+  .site-header__service strong{
+    display:block;
+    font-size:1.55rem;
+    color:var(--ink);
+    font-weight:700;
+    letter-spacing:-0.03em;
+  }
+  .site-header__tools{
+    margin-left:auto;
+    display:flex;
+    gap:8px;
+  }
+
+  .subnav{
+    background:#0a0a0a;
+    border-bottom:1px solid #2b2b2b;
+  }
+  .subnav__inner{
+    max-width:1180px;
+    margin:0 auto;
+    padding:0 24px;
+    display:flex;
+    gap:2px;
+    flex-wrap:wrap;
+  }
+  .subnav button{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:12px 14px;
+    color:#dfe0e1;
+    background:none;
+    border:none;
+    text-decoration:none;
+    font-size:0.88rem;
+    font-weight:500;
+    border-bottom:3px solid transparent;
+    cursor:pointer;
+  }
+  .subnav button .step-dot{
+    width:16px;height:16px;border-radius:50%;
+    background:#3a3a3a;
+    color:#cfcfcf;
+    font-size:0.65rem;
+    display:flex;align-items:center;justify-content:center;
+    flex:none;
+  }
+  .subnav button:hover{color:var(--white);}
+  .subnav button.is-active{
+    color:var(--white);
+    border-bottom-color:var(--carleton-red);
+  }
+  .subnav button.is-active .step-dot{background:var(--carleton-red);color:var(--white);}
+  .subnav button.is-done .step-dot{background:#1d1d1d;color:#7fd39a;}
+
+  .hero{
+    background:linear-gradient(180deg,#f8f0f1 0%, var(--paper) 100%);
+    border-bottom:1px solid var(--line);
+  }
+  .hero__inner{
+    max-width:1180px;
+    margin:0 auto;
+    padding:32px 24px 22px;
+  }
+  .hero h1{
+    font-size:2rem;
+    margin:0 0 8px;
+  }
+  .hero p.lede{
+    max-width:68ch;
+    color:var(--grey);
+    font-size:1.01rem;
+    margin:0;
+    font-family:var(--sans);
+  }
+
+  /* ===== Layout ===== */
+  main{
+    max-width:1180px;
+    margin:0 auto;
+    padding:28px 24px 64px;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:36px;
+    align-items:start;
+  }
+  main.single-col{grid-template-columns:1fr;max-width:900px;}
+  main.step-panel{
+    grid-template-columns:minmax(0, 1fr) minmax(0, 1fr);
+  }
+  @media (max-width:900px){
+    main{grid-template-columns:1fr;}
+    main.step-panel{grid-template-columns:1fr;}
+  }
+  .panel{
+    background:var(--panel);
+    border:1px solid var(--line);
+  }
+  .form-panel{padding:28px 28px 20px;}
+  .form-panel h2{
+    font-size:1.4rem;
+    margin:0 0 4px;
+  }
+  .form-panel .panel-note{
+    color:var(--grey);
+    font-size:0.88rem;
+    margin:0 0 20px;
+    font-family:var(--sans);
+  }
+
+  section.field-block{
+    padding:20px 0;
+    border-top:1px solid var(--line);
+  }
+  section.field-block:first-of-type{border-top:none;padding-top:4px;}
+  .field-block h3{
+    font-size:1rem;
+    margin:0 0 6px;
+    display:flex;
+    align-items:baseline;
+    gap:8px;
+  }
+  .field-block h3 .idx{
+    color:var(--carleton-red);
+    font-family:var(--mono);
+    font-size:0.82rem;
+  }
+  .field-block p.help{
+    color:var(--grey);
+    font-size:0.87rem;
+    margin:0 0 10px;
+    font-family:var(--sans);
+  }
+  .field-block p.help em{color:var(--grey-light);font-style:italic;}
+
+  label.field-label{
+    display:block;
+    font-size:0.78rem;
+    font-weight:600;
+    text-transform:uppercase;
+    letter-spacing:0.04em;
+    color:var(--grey);
+    margin:0 0 4px;
+    font-family:var(--sans);
+  }
+  label.field-label .req{color:var(--carleton-red);}
+
+  textarea, input[type=text], select{
+    width:100%;
+    font-family:var(--sans);
+    font-size:0.95rem;
+    padding:9px 10px;
+    border:1px solid #d7d1ca;
+    background:#fffdfd;
+    color:var(--ink);
+    resize:vertical;
+    border-radius:var(--radius);
+  }
+  textarea:focus, input[type=text]:focus, select:focus{
+    border-color:var(--carleton-red);
+    background:var(--white);
+  }
+  .field-row{margin-bottom:14px;}
+  .two-col{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px;
+  }
+  @media (max-width:520px){.two-col{grid-template-columns:1fr;}}
+
+  .info-btn{
+    border:none;background:none;
+    color:var(--grey-light);
+    cursor:pointer;
+    font-size:0.75rem;
+    vertical-align:middle;
+    padding:0 0 0 2px;
+    text-decoration:underline dotted;
+    font-family:var(--sans);
+  }
+  .info-btn:hover{color:var(--carleton-red-dark);}
+
+  .person-card{
+    border:1px solid var(--line);
+    background:#fef6f6;
+    padding:16px;
+    margin-bottom:14px;
+    position:relative;
+  }
+  .person-card__title{
+    font-weight:600;
+    font-size:0.85rem;
+    color:var(--carleton-red-dark);
+    text-transform:uppercase;
+    letter-spacing:0.05em;
+    margin-bottom:10px;
+    font-family:var(--sans);
+  }
+  .person-card__tools{
+    position:absolute;
+    top:12px; right:12px;
+    display:flex;
+    gap:4px;
+  }
+  .icon-btn{
+    width:26px;height:26px;
+    border:1px solid var(--line);
+    background:var(--white);
+    cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    color:var(--grey);
+    font-size:0.8rem;
+    line-height:1;
+  }
+  .icon-btn:hover:not(:disabled){border-color:var(--carleton-red);color:var(--carleton-red-dark);}
+  .icon-btn:disabled{opacity:0.35;cursor:not-allowed;}
+
+  .btn{
+    font-family:var(--sans);
+    font-weight:600;
+    font-size:0.88rem;
+    padding:10px 18px;
+    border:1px solid var(--ink);
+    background:var(--white);
+    color:var(--ink);
+    cursor:pointer;
+    border-radius:var(--radius);
+  }
+  .btn:hover{background:var(--ink);color:var(--white);}
+  .btn-primary{
+    background:var(--carleton-red);
+    border-color:var(--carleton-red);
+    color:var(--white);
+  }
+  .btn-primary:hover{background:var(--carleton-red-dark);border-color:var(--carleton-red-dark);}
+  .btn-block{width:100%;margin-top:4px;}
+  .btn-sm{font-size:0.78rem;padding:7px 12px;}
+  .btn[disabled]{opacity:0.4;cursor:not-allowed;}
+
+  .nav-buttons{
+    display:flex;
+    justify-content:space-between;
+    margin-top:26px;
+    padding-top:18px;
+    border-top:1px solid var(--line);
+  }
+
+  /* ===== Preview panel ===== */
+  .preview-panel{
+    position:sticky;
+    top:20px;
+    display:flex;
+    flex-direction:column;
+    max-height:calc(100vh - 40px);
+  }
+  .preview-panel__head{
+    padding:20px 22px 14px;
+    border-bottom:1px solid var(--line);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+  }
+  .preview-panel__head h2{
+    font-size:1.15rem;
+    margin:0;
+  }
+  .preview-status{
+    font-family:var(--sans);
+    font-size:0.76rem;
+    color:var(--ok);
+    font-weight:600;
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+  .preview-status__dot{
+    width:7px;height:7px;border-radius:50%;
+    background:var(--ok);
+  }
+  .code-wrap{
+    background:var(--mono-bg);
+    color:var(--mono-fg);
+    padding:20px 22px;
+    overflow:auto;
+    flex:1;
+    font-family:var(--mono);
+    font-size:0.78rem;
+    line-height:1.55;
+    white-space:pre-wrap;
+    word-break:break-word;
+  }
+  .code-wrap .placeholder{color:#8f8f8f;}
+  .copy-row{
+    padding:14px 22px;
+    border-top:1px solid var(--line);
+    display:flex;
+    justify-content:flex-end;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .copy-row .btn{font-size:0.82rem;padding:8px 14px;}
+
+  /* ===== Start step ===== */
+  .start-panel{padding:32px;}
+  .start-panel h2{font-size:1.6rem;margin:0 0 14px;}
+  .start-panel p{font-family:var(--sans);color:var(--grey);font-size:0.98rem;}
+  .start-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:16px;
+    margin:22px 0 26px;
+  }
+  @media (max-width:640px){.start-grid{grid-template-columns:1fr;}}
+  .start-card{
+    border:1px solid var(--line);
+    padding:16px 18px;
+    background:#fef6f6;
+  }
+  .start-card h3{font-size:0.95rem;margin:0 0 6px;font-family:var(--sans);color:var(--carleton-red-dark);}
+  .start-card p{margin:0;font-size:0.86rem;}
+  .draft-row{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin:18px 0;
+    padding:16px;
+    border:1px dashed var(--line);
+    background:#fffdfd;
+    align-items:center;
+  }
+  .draft-row p{margin:0;font-size:0.85rem;flex:1 1 220px;}
+  input[type=file]{display:none;}
+
+  /* ===== Output step ===== */
+  .output-panel{padding:32px;}
+  .output-panel h2{font-size:1.5rem;margin:0 0 4px;}
+  .output-actions{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin:18px 0 20px;
+  }
+  .checklist{
+    font-family:var(--sans);
+    font-size:0.88rem;
+    margin:0 0 20px;
+    padding:14px 16px;
+    border:1px solid var(--line);
+    background:#fef6f6;
+  }
+  .checklist.is-clear{background:#f2fbf4;border-color:#bfe6c9;}
+  .checklist h3{margin:0 0 8px;font-size:0.92rem;font-family:var(--sans);}
+  .checklist ul{margin:0;padding-left:20px;}
+  .checklist li{margin-bottom:4px;}
+
+  /* ===== Certification checkbox ===== */
+  .cert-box{
+    display:flex;
+    gap:10px;
+    align-items:flex-start;
+    padding:14px;
+    border:1px solid var(--line);
+    background:#fef6f6;
+  }
+  .cert-box input[type=checkbox]{width:18px;height:18px;margin-top:2px;accent-color:var(--carleton-red);flex:none;}
+  .cert-box label{font-family:var(--sans);font-size:0.88rem;color:var(--grey);line-height:1.5;}
+
+  .radio-row{display:flex;gap:18px;font-family:var(--sans);font-size:0.9rem;margin-bottom:10px;}
+  .radio-row label{display:flex;align-items:center;gap:6px;font-weight:400;text-transform:none;letter-spacing:0;}
+  .radio-row input{accent-color:var(--carleton-red);}
+
+  /* ===== Modal ===== */
+  .modal-backdrop{
+    position:fixed; inset:0;
+    background:rgba(0,0,0,0.55);
+    display:none;
+    align-items:center; justify-content:center;
+    padding:20px;
+    z-index:50;
+  }
+  .modal-backdrop.is-open{display:flex;}
+  .modal{
+    background:var(--white);
+    max-width:460px;
+    width:100%;
+    border-top:4px solid var(--carleton-red);
+  }
+  .modal__head{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:16px 18px;
+    border-bottom:1px solid var(--line);
+  }
+  .modal__head h3{margin:0;font-size:1.05rem;}
+  .modal__close{border:none;background:none;font-size:1.3rem;cursor:pointer;color:var(--grey);line-height:1;}
+  .modal__body{padding:16px 18px;font-size:0.9rem;color:var(--grey);font-family:var(--sans);line-height:1.55;}
+  .modal__body a{color:var(--carleton-red-dark);}
+
+  /* ===== Footer ===== */
+  footer.site-footer{
+    background:#0c0c0c;
+    color:#d9d3cf;
+    margin-top:20px;
+  }
+  .site-footer__inner{
+    max-width:1180px;
+    margin:0 auto;
+    padding:34px 24px;
+  }
+  .site-footer__logo{
+    height:30px;
+    margin-bottom:18px;
+    filter:brightness(0) invert(1);
+    opacity:0.92;
+  }
+  .site-footer__credit{
+    font-family:var(--sans);
+    font-size:0.82rem;
+    line-height:1.6;
+    max-width:80ch;
+    border-left:3px solid var(--carleton-red);
+    padding-left:14px;
+    margin-bottom:22px;
+  }
+  .site-footer__credit strong{color:var(--white);}
+  .site-footer__credit a{color:#f2b8bc;}
+  .site-footer__bottom{
+    display:flex;
+    flex-wrap:wrap;
+    gap:18px;
+    align-items:center;
+    justify-content:space-between;
+    padding-top:18px;
+    border-top:1px solid #2c2c2c;
+    font-family:var(--sans);
+    font-size:0.8rem;
+  }
+  .site-footer__bottom ul{
+    list-style:none; display:flex; gap:18px; padding:0; margin:0;
+  }
+  .site-footer__bottom a{color:#d9d3cf;text-decoration:none;}
+  .site-footer__bottom a:hover{color:var(--white);text-decoration:underline;}
+
+  .sr-only{
+    position:absolute; width:1px; height:1px;
+    padding:0; margin:-1px; overflow:hidden;
+    clip:rect(0,0,0,0); white-space:nowrap; border:0;
+  }
+
+  .step-panel{display:none;}
+  .step-panel.is-active{display:grid;}
+  .step-panel.is-active.block{display:grid;}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="site-header__inner">
+    <img class="site-header__logo" src="assets/MacObrand.png" alt="AlpTools brand logo">
+    <div class="site-header__divider"></div>
+    <div class="site-header__service">
+      <strong>Research Data Management</strong>
+      README Generator
+    </div>
+    <div class="site-header__tools">
+      <button type="button" class="btn btn-sm" onclick="downloadSelf()" title="Download this whole tool as a single offline HTML file">&#8681; Download this tool</button>
+    </div>
+  </div>
+</header>
+
+<nav class="subnav" aria-label="README Generator sections">
+  <div class="subnav__inner" id="subnav"></div>
+</nav>
+
+<div class="hero">
+  <div class="hero__inner">
+    <h1>README Generator</h1>
+    <p class="lede">Build a well-structured README file for your dataset, section by section. Fill in the fields as you go — your file updates automatically in the live preview. Everything runs in your browser; nothing is uploaded anywhere.</p>
+  </div>
+</div>
+
+<!-- ============ STEP 0: START ============ -->
+<main id="main-0" class="step-panel block">
+  <div class="panel start-panel">
+    <h2>Before you start</h2>
+    <p>A README file is a short, plain-text document that sits alongside a dataset and explains what it is, who made it, how it was collected, and how it is organized — so that you, or anyone else, can understand and reuse it correctly later on.</p>
+    <p>This generator walks you through four short sections. As you type, a live preview builds your README in the standard plain-text format on the right (or below, on small screens). When you're done, the <strong>Output</strong> step lets you copy the finished file or download it.</p>
+
+    <div class="start-grid">
+      <div class="start-card">
+        <h3>1. General Information</h3>
+        <p>Title, overview, authors, contributors, dates, location, funding, and ethics approval.</p>
+      </div>
+      <div class="start-card">
+        <h3>2. Sharing / Access Information</h3>
+        <p>Licences, restrictions, related publications, related datasets, and how the dataset should be cited.</p>
+      </div>
+      <div class="start-card">
+        <h3>3. Data &amp; File Overview</h3>
+        <p>A file list or folder tree, relationships between files, and version notes.</p>
+      </div>
+      <div class="start-card">
+        <h3>4. Output</h3>
+        <p>Review, copy, or download your finished README.txt file.</p>
+      </div>
+    </div>
+
+    <div class="draft-row">
+      <p>Already partway through a README? Load a previously saved draft to pick up where you left off.</p>
+      <button type="button" class="btn" onclick="document.getElementById('draftFile').click()">Load draft (.json)</button>
+      <input type="file" id="draftFile" accept="application/json" onchange="loadDraft(event)">
+    </div>
+
+    <div class="nav-buttons" style="border-top:none;padding-top:0;">
+      <span></span>
+      <button type="button" class="btn btn-primary" onclick="goToStep(1)">Start &rarr;</button>
+    </div>
+  </div>
+</main>
+
+<!-- ============ STEP 1: GENERAL INFORMATION ============ -->
+<main id="main-1" class="step-panel">
+  <div class="panel form-panel">
+    <h2>General Information</h2>
+    <p class="panel-note">All fields save automatically to the preview as you type. Required fields are marked <span style="color:var(--carleton-red);font-weight:700;">*</span>.</p>
+
+    <section class="field-block">
+      <h3><span class="idx">1.1</span> Title <span class="req">*</span></h3>
+      <textarea id="f-title" rows="1" aria-label="Dataset title" oninput="render()" placeholder="e.g., Urban Heat Island Effects in the National Capital Region, 2023-2025"></textarea>
+    </section>
+
+    <section class="field-block">
+      <h3><span class="idx">1.2</span> Overview <span class="req">*</span></h3>
+      <p class="help">A brief description (2-3 sentences max) to guide the reader through the available materials, from start to finish. Include the purpose, nature, and scope of the dataset.</p>
+      <textarea id="f-overview" rows="4" aria-label="Overview" oninput="render()"></textarea>
+    </section>
+
+    <section class="field-block">
+      <h3><span class="idx">1.3</span> Authors <span class="req">*</span></h3>
+      <p class="help">Please provide <strong>at least two contacts</strong>. This supports dataset longevity if researchers move to a different institution or retire.
+        <button type="button" class="info-btn" onclick="openModal('modal-team')">what's this?</button>
+      </p>
+      <div id="authors-container"></div>
+      <button type="button" class="btn btn-block" onclick="addAuthor()">+ Add Author</button>
+    </section>
+
+    <section class="field-block">
+      <h3><span class="idx">1.4</span> Contributors</h3>
+      <p class="help">List the names and contributions of everyone involved with collection, collaboration, processing, analysis, and/or submission.</p>
+      <textarea id="f-team" rows="2" aria-label="Team list" oninput="render()"></textarea>
+    </section>
+
+    <section class="field-block">
+      <h3><span class="idx">1.5</span> Date of Collection</h3>
+      <p class="help">Provide a single date, a range, or an approximate date. Suggested format YYYY-MM-DD.</p>
+      <textarea id="f-date" rows="1" aria-label="Date of collection" oninput="render()" placeholder="YYYY-MM-DD"></textarea>
+    </section>
+
+    <section class="field-block">
+      <h3><span class="idx">1.6</span> Geographic Information</h3>
+      <p class="help">If relevant to your dataset, provide the location of data collection - latitude/longitude, or city/region, province, country. <em>Example: Ottawa, ON</em></p>
+      <textarea id="f-geo" rows="2" aria-label="Location of data collection" oninput="render()"></textarea>
+    </section>
+
+    <section class="field-block">
+      <h3><span class="idx">1.7</span> Funding Information</h3>
+      <p class="help">Include the granting agency and number for funding or sponsorship sources that supported the collection of the data. <em>Example: Support for this research was provided by the Natural Sciences and Engineering Research Council (NSERC) of Canada via a Discovery Grant (RGPIN-2023-04821) to J. Fry.</em></p>
+      <textarea id="f-funding" rows="2" aria-label="Funding information" oninput="render()"></textarea>
+    </section>
+
+    <section class="field-block">
+      <h3><span class="idx">1.8</span> Ethics Information</h3>
+      <p class="help">If relevant to your dataset, include details on the research ethics board(s) which granted approval to the project. <em>Example: This research was approved by the Carleton University Research Ethics Board for Psychology (CUREB-B 108675).</em></p>
+      <textarea id="f-ethics" rows="2" aria-label="Ethics information" oninput="render()"></textarea>
+    </section>
+
+    <div class="nav-buttons">
+      <button type="button" class="btn" onclick="goToStep(0)">&larr; Previous</button>
+      <button type="button" class="btn btn-primary" onclick="goToStep(2)">Next &rarr;</button>
+    </div>
+  </div>
+  <div class="panel preview-panel" id="preview-1"></div>
+</main>
+
+<!-- ============ STEP 2: SHARING / ACCESS INFORMATION ============ -->
+<main id="main-2" class="step-panel">
+  <div class="panel form-panel">
+    <h2>Sharing / Access Information</h2>
+    <p class="panel-note">All fields save automatically to the preview as you type. Required fields are marked <span style="color:var(--carleton-red);font-weight:700;">*</span>.</p>
+
+    <section class="field-block">
+      <h3><span class="idx">2.1</span> Certification <span class="req">*</span></h3>
+      <p class="help">This statement is included in your README to confirm the dataset is ready to share.</p>
+      <div class="cert-box">
+        <input type="checkbox" id="f-cert" onchange="render()">
+        <label for="f-cert">As author(s) of this dataset, I/we certify that the data is free of licensing and intellectual property issues; does not contain identifying or sensitive information beyond what has been authorized for release; and that, where applicable, the appropriate Carleton University Research Ethics Board has granted approval to share this dataset.</label>
+      </div>
+    </section>
+
+    <section class="field-block">
+      <h3><span class="idx">2.2</span> Licence / Restrictions</h3>
+      <p class="help">Note any licence placed on the data (e.g., a Creative Commons licence), or any restrictions on its use, redistribution, or reproduction. <em>Example: This dataset is made available under a CC BY 4.0 licence.</em></p>
+      <textarea id="f-license" rows="2" aria-label="Licence or restrictions" oninput="render()"></textarea>
+    </section>
+
+    <section class="field-block">
+      <h3><span class="idx">2.3</span> Links to Publications</h3>
+      <p class="help">Links or citations to any publications that cite or use this dataset.</p>
+      <textarea id="f-pubs" rows="2" aria-label="Links to publications" oninput="render()"></textarea>
+    </section>
+
+    <section class="field-block">
+      <h3><span class="idx">2.4</span> Links to Other Locations</h3>
+      <p class="help">Links to other publicly accessible locations where this dataset (or parts of it) can be found, such as a data repository DOI. <em>Example: Available via Borealis, the Canadian Dataverse Repository, at https://doi.org/XXXXXX/XXXX</em></p>
+      <textarea id="f-locations" rows="2" aria-label="Links to other locations" oninput="render()"></textarea>
+    </section>
+
+    <section class="field-block">
+      <h3><span class="idx">2.5</span> Related / Ancillary Datasets</h3>
+      <p class="help">Was this data derived from, or related to, another source or dataset? If so, list it/them here.</p>
+      <textarea id="f-derived" rows="2" aria-label="Related datasets" oninput="render()"></textarea>
+    </section>
+
+    <section class="field-block">
+      <h3><span class="idx">2.6</span> Terms of Use</h3>
+      <p class="help">Any additional terms of use, embargo periods, or conditions readers should be aware of before reusing this data.</p>
+      <textarea id="f-terms" rows="2" aria-label="Terms of use" oninput="render()"></textarea>
+    </section>
+
+    <section class="field-block">
+      <h3><span class="idx">2.7</span> Recommended Citation <span class="req">*</span></h3>
+      <p class="help">How should someone cite this dataset? <em>Example: Lastname, Firstname (2026). "Dataset Title" [Data set]. Borealis, the Canadian Dataverse Repository. https://doi.org/XXXXXX/XXXX</em></p>
+      <textarea id="f-citation" rows="3" aria-label="Recommended citation" oninput="render()"></textarea>
+    </section>
+
+    <div class="nav-buttons">
+      <button type="button" class="btn" onclick="goToStep(1)">&larr; Previous</button>
+      <button type="button" class="btn btn-primary" onclick="goToStep(3)">Next &rarr;</button>
+    </div>
+  </div>
+  <div class="panel preview-panel" id="preview-2"></div>
+</main>
+
+<!-- ============ STEP 3: DATA & FILE OVERVIEW ============ -->
+<main id="main-3" class="step-panel">
+  <div class="panel form-panel">
+    <h2>Data &amp; File Overview</h2>
+    <p class="panel-note">All fields save automatically to the preview as you type. Required fields are marked <span style="color:var(--carleton-red);font-weight:700;">*</span>.</p>
+
+    <section class="field-block">
+      <h3><span class="idx">3.1</span> File List <span class="req">*</span></h3>
+      <p class="help">List every file (and folder) in the dataset with a one-line description of each, or paste in a plain-text folder tree. The <a href="https://alpozturkcarleton.github.io/AlpTools/folder-structure-generatorv3.html" target="_blank" rel="noopener">Folder Structure Generator Tool</a> can generate a text folder-tree diagram for you to paste here.</p>
+      <textarea id="f-filelist" rows="6" aria-label="File list" oninput="render()" placeholder="data/&#10;├── raw/2025-06-01_survey-raw.csv - unprocessed survey export&#10;├── processed/2025-06-01_survey-clean.csv - cleaned dataset used in analysis&#10;└── 2025-06-01_codebook.csv - variable definitions for the files above"></textarea>
+    </section>
+
+    <section class="field-block">
+      <h3><span class="idx">3.2</span> Relationships Between Files</h3>
+      <p class="help">Describe how files relate to one another, if that isn't obvious from the file list. <em>Example: 2025-06-01_codebook.csv explains the variables in 2025-06-01_survey-clean.csv.</em></p>
+      <textarea id="f-relationships" rows="3" aria-label="Relationships between files" oninput="render()"></textarea>
+    </section>
+
+    <section class="field-block">
+      <h3><span class="idx">3.3</span> Additional Related Data Not Included</h3>
+      <p class="help">Mention any data that was collected as part of this project but is not included in this data package, and briefly explain why.</p>
+      <textarea id="f-notincluded" rows="2" aria-label="Additional related data not included" oninput="render()"></textarea>
+    </section>
+
+    <section class="field-block">
+      <h3><span class="idx">3.4</span> Versions</h3>
+      <p class="help">Is this the first version of the dataset being shared? <em>Note: this section normally isn't needed for a first version - keep it in mind for future updates.</em></p>
+      <div class="radio-row">
+        <label><input type="radio" name="f-firstversion" value="yes" checked onchange="render()"> Yes, this is the first version</label>
+        <label><input type="radio" name="f-firstversion" value="no" onchange="render()"> No, this dataset has been updated</label>
+      </div>
+      <textarea id="f-versionnotes" rows="2" aria-label="Version notes" oninput="render()" placeholder="Which file(s) were updated, why, and when?"></textarea>
+    </section>
+
+    <div class="nav-buttons">
+      <button type="button" class="btn" onclick="goToStep(2)">&larr; Previous</button>
+      <button type="button" class="btn btn-primary" onclick="goToStep(4)">Next &rarr;</button>
+    </div>
+  </div>
+  <div class="panel preview-panel" id="preview-3"></div>
+</main>
+
+<!-- ============ STEP 4: OUTPUT ============ -->
+<main id="main-4" class="step-panel block single-col">
+  <div class="panel output-panel">
+    <h2>Your README</h2>
+    <p style="font-family:var(--sans);color:var(--grey);">Review your finished README below. You can copy it to your clipboard, download it as a ready-to-use text file, or save a draft to keep editing later.</p>
+
+    <div class="checklist" id="checklist"></div>
+
+    <div class="output-actions">
+      <button type="button" class="btn btn-primary" onclick="copyClipboard()">Copy to clipboard</button>
+      <button type="button" class="btn" onclick="downloadReadme()">Download README.txt</button>
+      <button type="button" class="btn" onclick="saveDraft()">Save draft (.json)</button>
+      <button type="button" class="btn" onclick="if(confirm('Clear all fields and start over?')) resetAll();">Start over</button>
+    </div>
+
+    <pre class="code-wrap" id="readmeOutputFinal" aria-live="polite" style="border:1px solid var(--line);"></pre>
+
+    <div class="nav-buttons">
+      <button type="button" class="btn" onclick="goToStep(3)">&larr; Previous</button>
+      <span></span>
+    </div>
+  </div>
+</main>
+
+<!-- Modals -->
+<div class="modal-backdrop" id="modal-team" onclick="if(event.target===this) closeModal('modal-team')">
+  <div class="modal">
+    <div class="modal__head"><h3>Information on Team List</h3><button class="modal__close" onclick="closeModal('modal-team')" aria-label="Close">&times;</button></div>
+    <div class="modal__body">NISO's Contributor Roles Taxonomy (CRediT) provides a list of roles typically played by contributors to scholarly output. See <a href="https://credit.niso.org/" target="_blank" rel="noopener">credit.niso.org</a>.</div>
+  </div>
+</div>
+<div class="modal-backdrop" id="modal-orcid" onclick="if(event.target===this) closeModal('modal-orcid')">
+  <div class="modal">
+    <div class="modal__head"><h3>ORCID</h3><button class="modal__close" onclick="closeModal('modal-orcid')" aria-label="Close">&times;</button></div>
+    <div class="modal__body">ORCID (Open Researcher and Contributor ID) is a persistent identifier for authors and contributors that connects your research outputs, including datasets, to an automatically updated record unique to you. Register at <a href="https://orcid.org/register" target="_blank" rel="noopener">orcid.org/register</a>.</div>
+  </div>
+</div>
+<div class="modal-backdrop" id="modal-ror" onclick="if(event.target===this) closeModal('modal-ror')">
+  <div class="modal">
+    <div class="modal__head"><h3>ROR</h3><button class="modal__close" onclick="closeModal('modal-ror')" aria-label="Close">&times;</button></div>
+    <div class="modal__body">The Research Organization Registry (ROR) is a persistent identifier for research institutions. Carleton University's ROR is <a href="https://ror.org/02qtvee93" target="_blank" rel="noopener">https://ror.org/02qtvee93</a>.</div>
+  </div>
+</div>
+<div class="modal-backdrop" id="modal-email" onclick="if(event.target===this) closeModal('modal-email')">
+  <div class="modal">
+    <div class="modal__head"><h3>Email</h3><button class="modal__close" onclick="closeModal('modal-email')" aria-label="Close">&times;</button></div>
+    <div class="modal__body">Consider including your institutional email as well as an alternate contact you can be reached at if you relocate to a different institution.</div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="site-footer__inner">
+    <img class="site-footer__logo" src="assets/MacObrand.png" alt="AlpTools brand logo">
+    <p class="site-footer__credit">
+      This README Generator has been adapted for <strong>Carleton University</strong> by MacOdrum Library's Research Data Management Services.
+      It is based on the <strong><a href="https://rdm.mcmaster.ca/readme" target="_blank" rel="noopener">McMaster University README Generator</a></strong>, developed by Richie Motorgeanu, Debbie Lawlor, Rebeca Gaston Jothyraj, Danica Evering, and Isaac Pratt (McMaster University Research Data Management), and made available under a
+      <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">Creative Commons Attribution 4.0 (CC BY 4.0)</a> license. The original tool was in turn inspired by the Cornell University guide to writing readme-style metadata and the
+      <a href="https://citation-file-format.github.io/cffinit/" target="_blank" rel="noopener">Citation File Format initializer (cffinit)</a>. This adaptation carries the same CC BY 4.0 license and this whole page may be freely downloaded, copied, and reused.
+    </p>
+    <div class="site-footer__bottom">
+      <span>&copy; 2026 Carleton University</span>
+      <ul>
+        <li><a href="https://carleton.ca/website-privacy-statement/" target="_blank">Privacy</a></li>
+        <li><a href="https://carleton.ca/website-terms-of-use/" target="_blank">Terms of Use</a></li>
+        <li><a href="https://library.carleton.ca/contact" target="_blank">Contact Data Services</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ============================================================
+   Step / navigation state
+   ============================================================ */
+const STEPS = ['Start','General Information','Sharing / Access','Data & Files','Output'];
+let currentStep = 0;
+
+function buildSubnav(){
+  const nav = document.getElementById('subnav');
+  nav.innerHTML = STEPS.map((label,i) => `
+    <button type="button" data-step="${i}" onclick="goToStep(${i})">
+      <span class="step-dot">${i+1}</span>${label}
+    </button>`).join('');
+}
+
+function goToStep(n){
+  currentStep = n;
+  document.querySelectorAll('main.step-panel').forEach((el,i) => {
+    el.classList.toggle('is-active', i === n);
+  });
+  document.querySelectorAll('#subnav button').forEach((btn,i) => {
+    btn.classList.toggle('is-active', i === n);
+    btn.classList.toggle('is-done', i < n);
+  });
+  window.scrollTo({top:0, behavior:'smooth'});
+  render();
+}
+
+/* ============================================================
+   Author cards (General Information step)
+   ============================================================ */
+let authorSeq = 0;
+const authorIds = [];
+
+function newAuthorTemplate(id, defaultName){
+  return `
+  <div class="person-card" data-author-id="${id}">
+    <div class="person-card__title">${defaultName}</div>
+    <div class="person-card__tools">
+      <button type="button" class="icon-btn" title="Move up" onclick="moveAuthor(${id},-1)">&uarr;</button>
+      <button type="button" class="icon-btn" title="Move down" onclick="moveAuthor(${id},1)">&darr;</button>
+      <button type="button" class="icon-btn" title="Remove" onclick="removeAuthor(${id})">&times;</button>
+    </div>
+    <div class="field-row">
+      <label class="field-label" for="name-${id}">Name <span class="req">*</span></label>
+      <textarea id="name-${id}" rows="1" oninput="render()"></textarea>
+    </div>
+    <div class="field-row">
+      <label class="field-label" for="role-${id}">Role</label>
+      <textarea id="role-${id}" rows="1" oninput="render()" placeholder="Author">Author</textarea>
+    </div>
+    <div class="field-row">
+      <label class="field-label" for="inst-${id}">Institution <span class="req">*</span></label>
+      <textarea id="inst-${id}" rows="1" oninput="render()">Carleton University</textarea>
+    </div>
+    <div class="two-col field-row">
+      <div>
+        <label class="field-label" for="orcid-${id}">ORCID <button type="button" class="info-btn" onclick="openModal('modal-orcid')">info</button></label>
+        <textarea id="orcid-${id}" rows="1" oninput="render()"></textarea>
+      </div>
+      <div>
+        <label class="field-label" for="ror-${id}">ROR <button type="button" class="info-btn" onclick="openModal('modal-ror')">info</button></label>
+        <textarea id="ror-${id}" rows="1" oninput="render()">https://ror.org/02qtvee93</textarea>
+      </div>
+    </div>
+    <div class="field-row">
+      <label class="field-label" for="addr-${id}">Address</label>
+      <textarea id="addr-${id}" rows="1" oninput="render()">1125 Colonel By Drive, Ottawa, ON K1S 5B6</textarea>
+    </div>
+    <div class="field-row">
+      <label class="field-label" for="email-${id}">Email <span class="req">*</span> <button type="button" class="info-btn" onclick="openModal('modal-email')">info</button></label>
+      <textarea id="email-${id}" rows="1" oninput="render()"></textarea>
+    </div>
+  </div>`;
+}
+
+function addAuthor(){
+  authorSeq++;
+  authorIds.push(authorSeq);
+  document.getElementById('authors-container').insertAdjacentHTML('beforeend', newAuthorTemplate(authorSeq, `Author #${authorIds.length}`));
+  refreshAuthorChrome();
+  render();
+}
+
+function removeAuthor(id){
+  if(authorIds.length <= 1) return;
+  const idx = authorIds.indexOf(id);
+  if(idx === -1) return;
+  authorIds.splice(idx,1);
+  document.querySelector(`[data-author-id="${id}"]`).remove();
+  relabelAuthors();
+  refreshAuthorChrome();
+  render();
+}
+
+function moveAuthor(id, dir){
+  const idx = authorIds.indexOf(id);
+  const target = idx + dir;
+  if(target < 0 || target >= authorIds.length) return;
+  [authorIds[idx], authorIds[target]] = [authorIds[target], authorIds[idx]];
+  const container = document.getElementById('authors-container');
+  const els = authorIds.map(aid => document.querySelector(`[data-author-id="${aid}"]`));
+  els.forEach(el => container.appendChild(el));
+  relabelAuthors();
+  refreshAuthorChrome();
+  render();
+}
+
+function relabelAuthors(){
+  authorIds.forEach((id, i) => {
+    const card = document.querySelector(`[data-author-id="${id}"]`);
+    if(card) card.querySelector('.person-card__title').textContent = `Author #${i+1}`;
+  });
+}
+
+function refreshAuthorChrome(){
+  authorIds.forEach((id, i) => {
+    const card = document.querySelector(`[data-author-id="${id}"]`);
+    if(!card) return;
+    const [up, down, del] = card.querySelectorAll('.icon-btn');
+    up.disabled = (i === 0);
+    down.disabled = (i === authorIds.length - 1);
+    del.disabled = (authorIds.length <= 1);
+  });
+}
+
+/* ============================================================
+   Field helpers
+   ============================================================ */
+function val(id){
+  const el = document.getElementById(id);
+  if(!el) return '';
+  return el.value.trim();
+}
+function checked(id){
+  const el = document.getElementById(id);
+  return el ? el.checked : false;
+}
+function radioVal(name){
+  const el = document.querySelector(`input[name="${name}"]:checked`);
+  return el ? el.value : '';
+}
+
+/* ============================================================
+   Build README text
+   ============================================================ */
+function buildReadme(){
+  const title = val('f-title') || 'DATASET NAME';
+  const overview = val('f-overview');
+  const team = val('f-team');
+  const date = val('f-date');
+  const geo = val('f-geo');
+  const funding = val('f-funding');
+  const ethics = val('f-ethics');
+
+  const cert = checked('f-cert');
+  const license = val('f-license');
+  const pubs = val('f-pubs');
+  const locations = val('f-locations');
+  const derived = val('f-derived');
+  const terms = val('f-terms');
+  const citation = val('f-citation');
+
+  const filelist = val('f-filelist');
+  const relationships = val('f-relationships');
+  const notincluded = val('f-notincluded');
+  const firstVersion = radioVal('f-firstversion');
+  const versionnotes = val('f-versionnotes');
+
+  const today = new Date().toISOString().slice(0,10);
+  const rule = '-'.repeat(32);
+
+  let out = '';
+  out += '#'.repeat(100) + '\n';
+  out += `${title.toUpperCase()} - This README file was generated on ${today} using Carleton University's README Generator (MacOdrum Library, Research Data Management)\n`;
+  out += '#'.repeat(100) + '\n';
+  out += rule + '\n\n';
+
+  out += '1.0 GENERAL INFORMATION\n\n';
+  out += `1.1 Dataset Title: ${title}\n\n`;
+  out += `1.2 Overview: ${overview}\n\n`;
+  out += '1.3 Authors:\n\n';
+  authorIds.forEach(id => {
+    const role = val(`role-${id}`) || 'Author';
+    const name = val(`name-${id}`);
+    const orcid = val(`orcid-${id}`);
+    const ror = val(`ror-${id}`);
+    const inst = val(`inst-${id}`);
+    const addr = val(`addr-${id}`);
+    const email = val(`email-${id}`);
+    out += `${role}\n`;
+    out += `Name: ${name}\n`;
+    if(orcid) out += `ORCID: ${orcid}\n`;
+    if(ror) out += `ROR: ${ror}\n`;
+    out += `Institution: ${inst}\n`;
+    if(addr) out += `Address: ${addr}\n`;
+    out += `Email: ${email}\n\n`;
+  });
+  if(team) out += `1.4 Contributors: ${team}\n\n`;
+  if(date) out += `1.5 Date of collection: ${date}\n\n`;
+  if(geo) out += `1.6 Geographic information: ${geo}\n\n`;
+  if(funding) out += `1.7 Funding information: ${funding}\n\n`;
+  if(ethics) out += `1.8 Ethics information: ${ethics}\n\n`;
+
+  out += rule + '\n';
+  out += '2.0 SHARING / ACCESS INFORMATION\n\n';
+  out += `2.1 Certification: ${cert ? 'As author(s) of this dataset, I/we certify that the data is free of licensing and intellectual property issues; does not contain identifying or sensitive information beyond what has been authorized for release; and that, where applicable, the appropriate Carleton University Research Ethics Board has granted approval to share this dataset.' : '[not yet certified - check the box in the Sharing / Access step]'}\n\n`;
+  if(license) out += `2.2 Licence / restrictions: ${license}\n\n`;
+  if(pubs) out += `2.3 Links to publications: ${pubs}\n\n`;
+  if(locations) out += `2.4 Links to other locations: ${locations}\n\n`;
+  if(derived) out += `2.5 Related / ancillary datasets: ${derived}\n\n`;
+  if(terms) out += `2.6 Terms of use: ${terms}\n\n`;
+  out += `2.7 Recommended citation for this dataset: ${citation}\n\n`;
+
+  out += rule + '\n';
+  out += '3.0 DATA & FILE OVERVIEW\n\n';
+  out += `3.1 File List:\n${filelist || '[not yet provided]'}\n\n`;
+  if(relationships) out += `3.2 Relationships between files: ${relationships}\n\n`;
+  if(notincluded) out += `3.3 Additional related data not included: ${notincluded}\n\n`;
+  if(firstVersion === 'no'){
+    out += `3.4 Versions: This is not the first version of this dataset.${versionnotes ? ' ' + versionnotes : ''}\n\n`;
+  } else {
+    out += `3.4 Versions: This is the first version of this dataset shared with this README. [Note: this section is not usually needed for a first version - keep it in mind for future updates.]\n\n`;
+  }
+
+  out += rule + '\n';
+  out += `This README was generated using Carleton University's README Generator, MacOdrum Library, Research Data Management. Adapted from the McMaster University README Generator (CC BY 4.0), itself inspired by Cornell University's guide to writing readme-style metadata.\n`;
+
+  return out;
+}
+
+function missingFields(){
+  const missing = [];
+  if(!val('f-title')) missing.push('1.1 Title');
+  if(!val('f-overview')) missing.push('1.2 Overview');
+  let authorsOk = authorIds.length >= 2;
+  authorIds.forEach(id => {
+    if(!val(`name-${id}`) || !val(`email-${id}`)) authorsOk = false;
+  });
+  if(!authorsOk) missing.push('1.3 Authors (at least two, each with a name and email)');
+  if(!checked('f-cert')) missing.push('2.1 Certification checkbox');
+  if(!val('f-citation')) missing.push('2.7 Recommended citation');
+  if(!val('f-filelist')) missing.push('3.1 File list');
+  return missing;
+}
+
+/* ============================================================
+   Render (updates whichever preview panel is visible)
+   ============================================================ */
+function render(){
+  const text = buildReadme();
+
+  const prev1 = document.getElementById('preview-1');
+  const prev2 = document.getElementById('preview-2');
+  const prev3 = document.getElementById('preview-3');
+  const previewHTML = `
+    <div class="preview-panel__head">
+      <h2>Preview</h2>
+      <span class="preview-status"><span class="preview-status__dot"></span>Live</span>
+    </div>
+    <pre class="code-wrap">${escapeHtml(text)}</pre>
+    <div class="copy-row">
+      <button type="button" class="btn" onclick="copyClipboard()">Copy to clipboard</button>
+    </div>`;
+  [prev1, prev2, prev3].forEach(p => { if(p) p.innerHTML = previewHTML; });
+
+  const finalOut = document.getElementById('readmeOutputFinal');
+  if(finalOut) finalOut.textContent = text;
+
+  const checklistEl = document.getElementById('checklist');
+  if(checklistEl){
+    const missing = missingFields();
+    if(missing.length === 0){
+      checklistEl.className = 'checklist is-clear';
+      checklistEl.innerHTML = `<h3>&#10003; Looks complete</h3><p style="margin:0;">All required fields have been filled in.</p>`;
+    } else {
+      checklistEl.className = 'checklist';
+      checklistEl.innerHTML = `<h3>Still missing</h3><ul>${missing.map(m => `<li>${escapeHtml(m)}</li>`).join('')}</ul>`;
+    }
+  }
+}
+
+function escapeHtml(str){
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+/* ============================================================
+   Actions: copy / download / save-load draft / reset
+   ============================================================ */
+function copyClipboard(){
+  const text = buildReadme();
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = event.target;
+    const original = btn.textContent;
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = original, 1500);
+  }).catch(() => {
+    alert('Could not copy automatically - please select and copy the text manually.');
+  });
+}
+
+function downloadReadme(){
+  const text = buildReadme();
+  const blob = new Blob([text], {type:'text/plain'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  const titleSlug = (val('f-title') || 'README').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
+  a.download = `README_${titleSlug || 'dataset'}.txt`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+}
+
+function collectDraft(){
+  const data = { fields:{}, authors:[], radios:{} };
+  document.querySelectorAll('main textarea[id]').forEach(t => { data.fields[t.id] = t.value; });
+  document.querySelectorAll('main input[type=checkbox][id]').forEach(c => { data.fields[c.id] = c.checked; });
+  authorIds.forEach(id => {
+    data.authors.push({
+      role: val(`role-${id}`), name: val(`name-${id}`), inst: val(`inst-${id}`),
+      orcid: val(`orcid-${id}`), ror: val(`ror-${id}`), addr: val(`addr-${id}`), email: val(`email-${id}`)
+    });
+  });
+  data.radios['f-firstversion'] = radioVal('f-firstversion');
+  return data;
+}
+
+function saveDraft(){
+  const data = collectDraft();
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'readme-draft.json';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+}
+
+function loadDraft(evt){
+  const file = evt.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try{
+      const data = JSON.parse(reader.result);
+      // rebuild authors
+      document.getElementById('authors-container').innerHTML = '';
+      authorIds.length = 0; authorSeq = 0;
+      (data.authors && data.authors.length ? data.authors : [{},{}]).forEach(a => {
+        authorSeq++; authorIds.push(authorSeq);
+        document.getElementById('authors-container').insertAdjacentHTML('beforeend', newAuthorTemplate(authorSeq, `Author #${authorIds.length}`));
+        if(a.role !== undefined) document.getElementById(`role-${authorSeq}`).value = a.role;
+        if(a.name !== undefined) document.getElementById(`name-${authorSeq}`).value = a.name;
+        if(a.inst !== undefined) document.getElementById(`inst-${authorSeq}`).value = a.inst;
+        if(a.orcid !== undefined) document.getElementById(`orcid-${authorSeq}`).value = a.orcid;
+        if(a.ror !== undefined) document.getElementById(`ror-${authorSeq}`).value = a.ror;
+        if(a.addr !== undefined) document.getElementById(`addr-${authorSeq}`).value = a.addr;
+        if(a.email !== undefined) document.getElementById(`email-${authorSeq}`).value = a.email;
+      });
+      refreshAuthorChrome();
+      // rebuild other fields
+      Object.entries(data.fields || {}).forEach(([id,v]) => {
+        const el = document.getElementById(id);
+        if(!el) return;
+        if(el.type === 'checkbox') el.checked = !!v; else el.value = v;
+      });
+      if(data.radios && data.radios['f-firstversion']){
+        const r = document.querySelector(`input[name="f-firstversion"][value="${data.radios['f-firstversion']}"]`);
+        if(r) r.checked = true;
+      }
+      goToStep(1);
+      alert('Draft loaded.');
+    }catch(err){
+      alert('Could not read that file - please make sure it is a draft saved from this tool.');
+    }
+  };
+  reader.readAsText(file);
+  evt.target.value = '';
+}
+
+function resetAll(){
+  document.querySelectorAll('main textarea[id]').forEach(t => { t.value = t.defaultValue; });
+  document.getElementById('f-cert').checked = false;
+  document.getElementById('authors-container').innerHTML = '';
+  authorIds.length = 0; authorSeq = 0;
+  addAuthor(); addAuthor();
+  goToStep(0);
+}
+
+function downloadSelf(){
+  const blob = new Blob([document.documentElement.outerHTML], {type:'text/html'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'carleton_readme_generator.html';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+}
+
+function openModal(id){ document.getElementById(id).classList.add('is-open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('is-open'); }
+
+/* ============================================================
+   Init
+   ============================================================ */
+buildSubnav();
+addAuthor();
+addAuthor();
+goToStep(0);
+</script>
+
+</body>
+</html>
