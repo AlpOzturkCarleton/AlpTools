@@ -198,7 +198,7 @@
     gap:36px;
     align-items:start;
   }
-  main.single-col{grid-template-columns:1fr;max-width:1180px;}
+  main.single-col{grid-template-columns:1fr;max-width:none;width:100%;}
   main.step-panel{
     grid-template-columns:minmax(0, 1fr) minmax(0, 1fr);
   }
@@ -446,7 +446,7 @@
   input[type=file]{display:none;}
 
   /* ===== Output step ===== */
-  .output-panel{padding:32px;}
+  .output-panel{grid-column:1 / -1;padding:32px;width:100%;}
   .output-panel h2{font-size:1.5rem;margin:0 0 4px;}
   .output-actions{
     display:flex;
