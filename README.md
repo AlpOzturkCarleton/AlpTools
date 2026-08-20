@@ -4,8 +4,11 @@ Various tools for Alp in conducting Data Services. All of which are HTML pages w
 ## Folder Structure Generator 
 To be used to create a folder structure at once using powershell or terminal. 
 
-## Libinsight Notes Builder
-To be used for creating Libinsight internal notes for data analysis.
+## Libinsight Records Builder
+Build your full LibInsight records and export it to CSV for uploa, inlcudes expanded internal notes builder.
+
+## Data Service Internal Notes Builder
+Build your internal notes for assessment. (Legacy version of the Records Builder)
 
 ## ReadMe Generator
   This tool is based on the McMaster University
