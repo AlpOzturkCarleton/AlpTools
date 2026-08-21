@@ -1,0 +1,1380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>LibStats Notes Builder</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --paper: #f2ead9;
+      --card: #faf6ea;
+      --card-2: #eee2c4;
+      --rule: #d9c9a3;
+      --rule-strong: #b99b62;
+      --stamp: #a3242c;
+      --stamp-dim: rgba(163,36,44,0.10);
+      --stamp-glow: rgba(163,36,44,0.24);
+      --ledger: #3f6b52;
+      --ledger-dim: rgba(63,107,82,0.12);
+      --danger: #8c2f2f;
+      --danger-dim: rgba(140,47,47,0.12);
+      --gold: #7d590f;
+      --gold-dim: rgba(169,120,31,0.13);
+      --ink: #2b2417;
+      --ink-mid: #6b5d45;
+      --ink-faint: #756343;
+      --mono: 'IBM Plex Mono', monospace;
+      --sans: 'IBM Plex Sans', sans-serif;
+      --serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--sans);
+      background-color: var(--paper);
+      background-image: linear-gradient(rgba(185,155,98,0.10) 1px, transparent 1px);
+      background-size: 100% 27px;
+      color: var(--ink);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+
+    /* ---- Layout ---- */
+    .app {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      grid-template-rows: auto 1fr;
+      min-height: 100vh;
+    }
+
+    /* ---- Header ---- */
+    header {
+      grid-column: 1 / -1;
+      background: var(--card);
+      border-bottom: 1px solid var(--rule);
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1.1rem;
+    }
+    .header-logo {
+      width: 44px; height: 44px;
+      background: transparent;
+      border: 2px dashed var(--stamp);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--serif);
+      font-size: .68rem; font-weight: 700; letter-spacing: .03em; color: var(--stamp);
+      flex-shrink: 0;
+      transform: rotate(-9deg);
+    }
+    header h1 {
+      font-family: var(--serif);
+      font-size: 1.15rem; font-weight: 700; letter-spacing: -.005em; color: var(--ink);
+    }
+    header p {
+      font-size: .78rem; color: var(--ink-mid); margin-top: .15rem;
+      font-style: italic;
+    }
+    .header-badge {
+      margin-left: auto;
+      font-family: var(--mono);
+      font-size: .68rem;
+      letter-spacing: .04em;
+      color: var(--ink-mid);
+      background: var(--card-2);
+      border: 1px solid var(--rule-strong);
+      padding: .3rem .65rem;
+      border-radius: 2px;
+    }
+
+    /* ---- Sidebar ---- */
+    aside {
+      background: var(--card);
+      border-right: 1px solid var(--rule);
+      padding: 1.5rem 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .section-label {
+      font-size: .65rem;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      margin-bottom: .5rem;
+      padding-left: .5rem;
+      border-left: 3px solid var(--stamp);
+    }
+
+    /* Entry type toggle */
+    .type-toggle {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: .35rem;
+    }
+    .type-btn {
+      padding: .55rem;
+      border: 1px solid var(--rule);
+      border-radius: 3px;
+      background: transparent;
+      color: var(--ink-mid);
+      font-family: var(--sans);
+      font-size: .8rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all .15s;
+      text-align: center;
+    }
+    .type-btn:hover { border-color: var(--rule-strong); color: var(--ink); }
+    .type-btn.active {
+      background: var(--stamp-dim);
+      border-color: var(--stamp);
+      color: var(--stamp);
+      font-weight: 600;
+    }
+
+    /* Field groups in sidebar */
+    .field-group { display: flex; flex-direction: column; gap: .4rem; }
+    .field-group label {
+      font-size: .78rem;
+      font-weight: 500;
+      color: var(--ink-mid);
+    }
+
+    select, input[type="text"], input[type="number"], textarea {
+      background: var(--card-2);
+      border: 1px solid var(--rule);
+      border-radius: 3px;
+      color: var(--ink);
+      font-family: var(--sans);
+      font-size: .83rem;
+      padding: .5rem .7rem;
+      outline: none;
+      transition: border-color .15s;
+      width: 100%;
+    }
+    select:focus, input:focus, textarea:focus {
+      border-color: var(--stamp);
+      box-shadow: 0 0 0 2px var(--stamp-glow);
+    }
+    select option { background: var(--card-2); }
+    select[multiple] { height: 7rem; padding: .25rem; }
+    select[multiple] option {
+      padding: .3rem .5rem;
+      border-radius: 2px;
+      margin: 1px 0;
+    }
+    select[multiple] option:checked {
+      background: var(--stamp-dim);
+      color: var(--stamp);
+    }
+
+    textarea { resize: vertical; min-height: 4.5rem; }
+
+    .field-hint {
+      font-size: .7rem;
+      color: var(--ink-faint);
+      font-style: italic;
+      line-height: 1.4;
+    }
+
+    /* ---- Main content ---- */
+    main {
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      overflow-y: auto;
+    }
+
+    /* Live preview */
+    .preview-card {
+      position: relative;
+      background: var(--card);
+      border: 1px solid var(--rule-strong);
+      border-radius: 4px;
+      box-shadow: 0 2px 8px rgba(43,36,23,.08);
+      overflow: hidden;
+    }
+    .preview-card::before, .records-card::before {
+      content: "";
+      position: absolute;
+      top: 13px; left: 14px;
+      width: 9px; height: 9px;
+      border-radius: 50%;
+      background: var(--paper);
+      border: 1px solid var(--rule-strong);
+      z-index: 1;
+    }
+    .preview-header {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      padding: .75rem 1rem .75rem 2.2rem;
+      border-bottom: 1px solid var(--rule);
+      background: var(--card-2);
+    }
+    .preview-header h2 {
+      font-family: var(--serif);
+      font-size: .85rem;
+      font-weight: 600;
+      letter-spacing: .02em;
+      color: var(--ink-mid);
+    }
+    .live-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--ledger);
+      box-shadow: 0 0 6px var(--ledger);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: .4; }
+    }
+    .preview-body {
+      padding: 1rem;
+    }
+    .output-display {
+      font-family: var(--mono);
+      font-size: .9rem;
+      color: var(--ink);
+      background: var(--card-2);
+      border: 1px solid var(--rule);
+      border-top: 3px solid var(--stamp);
+      border-radius: 3px;
+      padding: 1rem;
+      min-height: 3rem;
+      word-break: break-all;
+      line-height: 1.6;
+      position: relative;
+    }
+    .output-display.empty {
+      color: var(--ink-faint);
+      font-style: italic;
+    }
+
+    /* Tokens preview */
+    .tokens-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .4rem;
+      margin-top: .85rem;
+    }
+    .token {
+      font-family: var(--mono);
+      font-size: .72rem;
+      padding: .2rem .55rem;
+      border-radius: 4px;
+      background: var(--card-2);
+      border: 1px solid var(--rule);
+      color: var(--ink-mid);
+      transition: all .15s;
+    }
+    .token.field   { border-color: var(--stamp); color: var(--stamp); background: var(--stamp-dim); }
+    .token.keyword { border-color: var(--gold); color: var(--gold); background: var(--gold-dim); }
+    .token.context { border-color: var(--ledger);  color: var(--ledger);  background: var(--ledger-dim); }
+    .token.empty   { border-color: var(--ink-faint); color: var(--ink-faint); font-style: italic; }
+    .token.separator { color: var(--ink-faint); border-color: transparent; background: transparent; padding: .2rem .1rem; }
+
+    /* Copy row */
+    .copy-row {
+      display: flex;
+      gap: .5rem;
+      margin-top: .85rem;
+    }
+    .btn {
+      font-family: var(--sans);
+      font-size: .78rem;
+      font-weight: 500;
+      padding: .45rem .9rem;
+      border-radius: 3px;
+      border: 1px solid var(--rule);
+      cursor: pointer;
+      transition: all .15s;
+      background: transparent;
+      color: var(--ink-mid);
+    }
+    .btn:hover { border-color: var(--rule-strong); color: var(--ink); }
+    .btn.primary {
+      background: var(--stamp);
+      border-color: var(--stamp);
+      color: #fdf8ec;
+    }
+    .btn.primary:hover { background: #82191f; }
+    .btn.success {
+      background: var(--ledger-dim);
+      border-color: var(--ledger);
+      color: var(--ledger);
+    }
+    .btn.danger {
+      background: var(--danger-dim);
+      border-color: var(--danger);
+      color: var(--danger);
+    }
+    .btn:disabled { opacity: .4; cursor: not-allowed; }
+
+    /* Records */
+    .records-card {
+      position: relative;
+      background: var(--card);
+      border: 1px solid var(--rule-strong);
+      border-radius: 4px;
+      box-shadow: 0 2px 8px rgba(43,36,23,.08);
+      overflow: hidden;
+    }
+    .records-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: .75rem 1rem .75rem 2.2rem;
+      border-bottom: 1px solid var(--rule);
+      background: var(--card-2);
+      cursor: pointer;
+      user-select: none;
+    }
+    .records-header h2 {
+      font-family: var(--serif);
+      font-size: .85rem;
+      font-weight: 600;
+      letter-spacing: .02em;
+      color: var(--ink-mid);
+    }
+    .records-count {
+      font-family: var(--mono);
+      font-size: .7rem;
+      color: var(--ink-faint);
+      background: var(--card);
+      border: 1px solid var(--rule);
+      padding: .15rem .45rem;
+      border-radius: 4px;
+    }
+    .records-actions {
+      display: flex;
+      gap: .4rem;
+      padding: .6rem 1rem;
+      border-bottom: 1px solid var(--rule);
+      background: var(--card-2);
+      flex-wrap: wrap;
+    }
+    .records-body {
+      max-height: 320px;
+      overflow-y: auto;
+    }
+    .record-row {
+      display: grid;
+      grid-template-columns: 90px 90px 1fr 28px;
+      gap: .5rem;
+      align-items: center;
+      padding: .6rem 1rem;
+      border-bottom: 1px solid var(--rule);
+      font-size: .78rem;
+      transition: background .1s;
+    }
+    .record-row:hover { background: var(--card-2); }
+    .record-row:last-child { border-bottom: none; }
+    .record-date { color: var(--ink-mid); font-family: var(--mono); font-size: .7rem; }
+    .record-type {
+      font-family: var(--mono);
+      font-size: .68rem;
+      padding: .15rem .45rem;
+      border-radius: 4px;
+      text-align: center;
+    }
+    .record-type.instruction { background: var(--gold-dim); color: var(--gold); border: 1px solid rgba(169,120,31,.35); }
+    .record-type.consultation { background: var(--ledger-dim); color: var(--ledger); border: 1px solid rgba(63,107,82,.35); }
+    .record-notes { font-family: var(--mono); font-size: .75rem; color: var(--ink); word-break: break-all; }
+    .record-del {
+      cursor: pointer;
+      color: var(--ink-faint);
+      font-size: .9rem;
+      line-height: 1;
+      background: none; border: none;
+      transition: color .15s;
+      padding: .2rem;
+    }
+    .record-del:hover { color: var(--danger); }
+    .records-empty {
+      padding: 2rem 1rem;
+      text-align: center;
+      color: var(--ink-faint);
+      font-size: .8rem;
+      font-family: var(--mono);
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 1.5rem; right: 1.5rem;
+      background: var(--card);
+      border: 1px solid var(--rule-strong);
+      color: var(--ink);
+      font-size: .8rem;
+      padding: .6rem 1rem;
+      border-radius: 3px;
+      box-shadow: 0 4px 20px rgba(43,36,23,.25);
+      transform: translateY(1rem);
+      opacity: 0;
+      transition: all .2s;
+      pointer-events: none;
+      z-index: 999;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast.green { border-color: var(--ledger); color: var(--ledger); }
+
+    /* Hidden */
+    .hidden { display: none; }
+
+    /* Scrollbar styling */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--rule-strong); }
+
+    /* Responsive */
+    @media (max-width: 680px) {
+      .app { grid-template-columns: 1fr; }
+      aside { border-right: none; border-bottom: 1px solid var(--rule); }
+    }
+
+    /* ---- LibInsight toggle ---- */
+    .li-toggle-btn {
+      width: 100%;
+      padding: .55rem;
+      border: 1px solid var(--rule);
+      border-radius: 3px;
+      background: transparent;
+      color: var(--ink-mid);
+      font-family: var(--sans);
+      font-size: .78rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all .15s;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+    }
+    .li-toggle-btn:hover { border-color: var(--rule-strong); color: var(--ink); }
+    .li-toggle-btn .li-dot {
+      width: 9px; height: 9px;
+      border-radius: 50%;
+      border: 1px solid var(--rule-strong);
+      background: var(--card-2);
+      flex-shrink: 0;
+      transition: all .15s;
+    }
+    .li-toggle-btn.on {
+      background: var(--ledger-dim);
+      border-color: var(--ledger);
+      color: var(--ledger);
+      font-weight: 600;
+    }
+    .li-toggle-btn.on .li-dot {
+      background: var(--ledger);
+      border-color: var(--ledger);
+      box-shadow: 0 0 5px var(--ledger);
+    }
+
+    /* Extra LibInsight field sections in sidebar */
+    .li-extra-section { display: flex; flex-direction: column; gap: .75rem; }
+    .li-extra-section .field-group input[readonly],
+    .li-extra-section .field-group textarea[readonly] {
+      opacity: .8;
+      cursor: default;
+    }
+
+    /* Structured / LibInsight saved record card */
+    .li-record-card {
+      border: 1px solid var(--rule);
+      border-radius: 3px;
+      background: var(--card-2);
+      padding: .65rem .8rem .75rem;
+      margin: .5rem 1rem;
+    }
+    .li-record-head {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      margin-bottom: .55rem;
+      padding-bottom: .45rem;
+      border-bottom: 1px dashed var(--rule);
+    }
+    .li-record-head .record-date { flex-shrink: 0; }
+    .li-record-head .record-type { flex-shrink: 0; }
+    .li-record-head .record-del { margin-left: auto; }
+    .li-fields {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: .35rem 1rem;
+    }
+    .li-field {
+      display: flex;
+      flex-direction: column;
+      gap: .1rem;
+    }
+    .li-field.li-full { grid-column: 1 / -1; }
+    .li-field-label {
+      font-family: var(--mono);
+      font-size: .64rem;
+      letter-spacing: .03em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+    }
+    .li-field-value {
+      font-family: var(--mono);
+      font-size: .75rem;
+      color: var(--ink);
+      word-break: break-word;
+      white-space: pre-wrap;
+    }
+    .li-field-value.empty { color: var(--ink-faint); font-style: italic; }
+
+    /* Header download button */
+    .header-download-btn {
+      font-family: var(--sans);
+      font-size: .72rem;
+      font-weight: 500;
+      letter-spacing: .02em;
+      color: var(--ink-mid);
+      background: var(--card-2);
+      border: 1px solid var(--rule-strong);
+      padding: .4rem .75rem;
+      border-radius: 2px;
+      cursor: pointer;
+      transition: all .15s;
+      white-space: nowrap;
+    }
+    .header-download-btn:hover { border-color: var(--stamp); color: var(--stamp); }
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <!-- Header -->
+  <header>
+    <div class="header-logo">RSS</div>
+    <div>
+      <h1>LibInsight Notes Builder</h1>
+    </div>
+    <button class="header-download-btn" id="downloadToolBtn" title="Download this tool as a standalone HTML file">⭳ Download Tool</button>
+  </header>
+
+  <!-- Sidebar / Form -->
+  <aside>
+
+    <!-- Entry type -->
+    <div>
+      <div class="section-label">Entry Type</div>
+      <div class="type-toggle">
+        <button class="type-btn" id="btnInstruction" onclick="setType('instruction')">Instruction</button>
+        <button class="type-btn active" id="btnConsultation" onclick="setType('consultation')">Consultation</button>
+      </div>
+    </div>
+
+    <!-- LibInsight Upload Format toggle -->
+    <div>
+      <div class="section-label">Upload Format</div>
+      <button class="li-toggle-btn" id="btnLibInsight" onclick="toggleLibInsight()">
+        <span class="li-dot"></span>
+        <span id="libInsightLabel">LibInsight Upload Format: Off</span>
+      </button>
+    </div>
+
+    <!-- Consultation fields -->
+    <div id="consultSection">
+      <div class="section-label">Consultation</div>
+      <div class="field-group" style="margin-bottom:.75rem">
+        <label for="consSubject">Subject</label>
+        <select id="consSubject"></select>
+      </div>
+      <div class="field-group" style="margin-bottom:.75rem">
+        <label for="consDetail">Detail</label>
+        <select id="consDetail"></select>
+      </div>
+      <div class="field-group" style="margin-bottom:.75rem">
+        <label for="consPreptime">Preptime (minutes, proportion)</label>
+        <input id="consPreptime" type="number" min="0" step="1" placeholder="e.g., 20" />
+        <span class="field-hint">Proportion of total time spent on prep.</span>
+      </div>
+      <div class="field-group">
+        <label for="contextNotes">Contextual Notes</label>
+        <textarea id="contextNotes" placeholder="Optional — add notes for future reference"></textarea>
+      </div>
+
+      <!-- LibInsight extra fields (Consultation) -->
+      <div id="consultLibInsight" class="li-extra-section hidden" style="margin-top:.9rem; padding-top:.9rem; border-top:1px dashed var(--rule);">
+        <div class="section-label">LibInsight Fields</div>
+
+        <div class="field-group">
+          <label for="liConsStartDate">Start Date</label>
+          <input id="liConsStartDate" type="date" />
+        </div>
+
+        <div class="field-group">
+          <label for="liConsInternalNotes">Internal Notes</label>
+          <textarea id="liConsInternalNotes" readonly placeholder="Auto-built from Subject / Detail / Preptime / Contextual Notes above"></textarea>
+        </div>
+
+        <div class="field-group">
+          <label for="liConsEnteredBy">Entered By</label>
+          <input id="liConsEnteredBy" type="text" placeholder="Last Name, First Name" />
+        </div>
+
+        <div class="field-group">
+          <label for="liConsContactMethod">Contact Method</label>
+          <select id="liConsContactMethod"></select>
+        </div>
+
+        <div class="field-group">
+          <label for="liConsCourseCode">Course Code / Subject</label>
+          <input id="liConsCourseCode" type="text" placeholder="e.g., SOC 2100" />
+        </div>
+
+        <div class="field-group">
+          <label for="liConsLocation">Location</label>
+          <select id="liConsLocation"></select>
+        </div>
+
+        <div class="field-group">
+          <label for="liConsPatrons">Number of Patrons</label>
+          <input id="liConsPatrons" type="number" min="0" max="999" step="1" placeholder="e.g., 1" />
+        </div>
+
+        <div class="field-group">
+          <label for="liConsTime">Time</label>
+          <select id="liConsTime"></select>
+        </div>
+
+        <div class="field-group">
+          <label for="liConsDuration">Time on Consultation (minutes)</label>
+          <input id="liConsDuration" type="number" min="0" max="999" step="1" placeholder="e.g., 30" />
+        </div>
+
+        <div class="field-group">
+          <label for="liConsTransactionType">Transaction Type</label>
+          <select id="liConsTransactionType"></select>
+        </div>
+
+        <div class="field-group">
+          <label for="liConsQuestionType">Type of Question</label>
+          <select id="liConsQuestionType"></select>
+        </div>
+
+        <div class="field-group">
+          <label for="liConsUserType">Type of User</label>
+          <select id="liConsUserType" multiple></select>
+          <span class="field-hint">Ctrl/Cmd + click to select multiple.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Instruction fields -->
+    <div id="instrSection" class="hidden">
+      <div class="section-label">Instruction</div>
+      <div class="field-group" style="margin-bottom:.75rem">
+        <label for="instrSubjects">Subjects</label>
+        <select id="instrSubjects" multiple></select>
+        <span class="field-hint">Ctrl/Cmd + click to select multiple.</span>
+      </div>
+      <div class="field-group" style="margin-bottom:.75rem">
+        <label for="instrPreptime">Preptime (minutes)</label>
+        <input id="instrPreptime" type="number" min="0" step="1" placeholder="e.g., 30" />
+        <span class="field-hint">Absolute time, included in total duration.</span>
+      </div>
+      <div class="field-group">
+        <label for="sessionTitle">Internal Notes</label>
+        <input id="sessionTitle" type="text" placeholder="e.g., Intro to Data Portals" />
+      </div>
+
+      <!-- LibInsight extra fields (Instruction) -->
+      <div id="instrLibInsight" class="li-extra-section hidden" style="margin-top:.9rem; padding-top:.9rem; border-top:1px dashed var(--rule);">
+        <div class="section-label">LibInsight Fields</div>
+
+        <div class="field-group">
+          <label for="liInstrStartDate">Start Date</label>
+          <input id="liInstrStartDate" type="date" />
+        </div>
+
+        <div class="field-group">
+          <label for="liInstrInternalNotes">Internal Notes</label>
+          <textarea id="liInstrInternalNotes" readonly placeholder="Auto-built from Subjects / Preptime / Internal Notes above"></textarea>
+        </div>
+
+        <div class="field-group">
+          <label for="liInstrEnteredBy">Entered By</label>
+          <input id="liInstrEnteredBy" type="text" placeholder="Last Name, First Name" />
+        </div>
+
+        <div class="field-group">
+          <label for="liInstrAttendance">Attendance</label>
+          <input id="liInstrAttendance" type="number" min="0" max="999" step="1" placeholder="e.g., 25" />
+        </div>
+
+        <div class="field-group">
+          <label for="liInstrAudience">Audience</label>
+          <select id="liInstrAudience" multiple></select>
+          <span class="field-hint">Ctrl/Cmd + click to select multiple.</span>
+        </div>
+
+        <div class="field-group">
+          <label for="liInstrCourseInstructor">Course Instructor</label>
+          <input id="liInstrCourseInstructor" type="text" placeholder="Last Name, First Name" />
+        </div>
+
+        <div class="field-group">
+          <label for="liInstrCourseNumber">Course Number</label>
+          <input id="liInstrCourseNumber" type="text" placeholder="e.g., SOC 2100" />
+        </div>
+
+        <div class="field-group">
+          <label for="liInstrDateOfSession">Date of Session</label>
+          <input id="liInstrDateOfSession" type="date" />
+        </div>
+
+        <div class="field-group">
+          <label for="liInstrLibraryInstructor">Library Instructor</label>
+          <input id="liInstrLibraryInstructor" type="text" placeholder="Last Name, First Name" />
+        </div>
+
+        <div class="field-group">
+          <label for="liInstrTopics">Topics Covered</label>
+          <textarea id="liInstrTopics" style="min-height:6rem" placeholder="What was covered in the session"></textarea>
+        </div>
+
+        <div class="field-group">
+          <label for="liInstrTotalTime">Total Time (minutes)</label>
+          <input id="liInstrTotalTime" type="number" min="0" max="999" step="1" placeholder="e.g., 50" />
+        </div>
+
+        <div class="field-group">
+          <label for="liInstrWorkshopName">Workshop Name</label>
+          <input id="liInstrWorkshopName" type="text" placeholder="e.g., Intro to Data Portals" />
+        </div>
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- Main -->
+  <main>
+
+    <!-- Live preview card -->
+    <div class="preview-card">
+      <div class="preview-header">
+        <div class="live-dot"></div>
+        <h2>Live Preview</h2>
+      </div>
+      <div class="preview-body">
+        <div id="outputDisplay" class="output-display empty">Start filling in fields…</div>
+        <div id="tokensRow" class="tokens-row"></div>
+        <div class="copy-row">
+          <button class="btn primary" id="copyBtn">Copy to Clipboard</button>
+          <button class="btn" id="saveBtn">Save Record</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Records card -->
+    <div class="records-card">
+      <div class="records-header" onclick="toggleRecords()">
+        <h2>Saved Records</h2>
+        <span class="records-count" id="recordsCount">0 records</span>
+      </div>
+      <div id="recordsActions" class="records-actions">
+        <button class="btn" onclick="exportCSV()">Export CSV</button>
+        <button class="btn" onclick="exportJSON()">Export JSON</button>
+        <button class="btn" onclick="exportMarkdown()">Export Markdown</button>
+        <button class="btn success" onclick="exportNotesOnly()">Export Internal Notes Only</button>
+        <button class="btn success" onclick="exportLibInsightCSV('consultation')">Export LibInsight CSV (Consultation)</button>
+        <button class="btn success" onclick="exportLibInsightCSV('instruction')">Export LibInsight CSV (Instruction)</button>
+        <button class="btn danger" onclick="clearSaved()" style="margin-left:auto">Clear All</button>
+      </div>
+      <div id="recordsBody" class="records-body">
+        <div class="records-empty" id="recordsEmpty">No records yet. Build and save notes above.</div>
+        <div id="recordsList"></div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+  // ---- Vocabulary ----
+  const SUBJECTS = ["Data Service", "RDM", "Analysis Packages"];
+  // Instruction sessions can additionally be logged as a Data Drip (a short, self-contained
+  // instructional segment) — this option only appears in the Instruction component.
+  const INSTRUCTION_SUBJECTS = [...SUBJECTS, "Data Drips"];
+  const DETAILS = {
+    "Data Service": [
+      "General Data Service","Finding Data","Data Portals","Data Sources","Data Access",
+      "Data Support","Data Requests","Data Examination/Evaluation","RDC","Odesi","ICPSR",
+      "Statistics Canada","PCCF/PCCF+"
+    ],
+    "RDM": [
+      "General RDM","DMPs","Data Repositories","Borealis","FRDR","Data Storage",
+      "Data Management","Data Sharing","Restricting Data","Managing Data Access","Administering Dataverse"
+    ],
+    "Analysis Packages": ["SPSS","SAS","Stata","Excel","R","Python","Qualtrics"]
+  };
+
+  // ---- LibInsight vocab ----
+  const LI_CONTACT_METHODS = ["In-Person", "Email", "Virtual"];
+  const LI_LOCATIONS = ["Research Help - Floor 2", "Computer Lab (Room 103)", "Other"];
+  const LI_TIMES = ["6am-8am", "8am-10am", "10am-12pm", "12pm-2pm", "2pm-4pm", "4pm-6pm", "6pm-6am"];
+  const LI_TRANSACTION_TYPES = [
+    "Reference / research help (<15 min.)", "Reference / In-depth (>15 min.)",
+    "Consultation", "Directional", "Referral", "IT help"
+  ];
+  const LI_QUESTION_TYPES = [
+    "Subject Research Help", "Data", "Government Information", "Maps/GIS",
+    "Knowledge Synthesis", "Citation", "Book Arts", "Archives", "Rare Books",
+    "Ottawa Resource Collection", "Other"
+  ];
+  const LI_USER_TYPES = [
+    "Undergraduate Student", "Graduate Student", "Faculty", "Staff", "Alumni", "External", "Other"
+  ];
+
+  // CSV column order for LibInsight-format exports/records — mirrors the uploaded templates
+  const LI_CONS_COLUMNS = [
+    "Start Date","Internal Notes","Entered By","IP Address","Contact Method",
+    "Course Code / Subject","Location","Number of Patrons","Time",
+    "Time on Consultation? (# minutes)","Transaction Type","Type of Question","Type of User"
+  ];
+  const LI_INSTR_COLUMNS = [
+    "Start Date","Internal Notes","Entered By","IP Address","Attendance","Audience",
+    "Course Instructor","Course Number","Date of Session","Library Instructor",
+    "Topics covered","Total time","Workshop name"
+  ];
+
+  // ---- State ----
+  let currentType = 'consultation';
+  let libInsightOn = false;
+
+  // ---- Elements ----
+  const consSubjectSel = document.getElementById('consSubject');
+  const consDetailSel  = document.getElementById('consDetail');
+  const consPreptime   = document.getElementById('consPreptime');
+  const contextNotes   = document.getElementById('contextNotes');
+  const instrSubjects  = document.getElementById('instrSubjects');
+  const instrPreptime  = document.getElementById('instrPreptime');
+  const sessionTitle   = document.getElementById('sessionTitle');
+  const outputDisplay  = document.getElementById('outputDisplay');
+  const tokensRow      = document.getElementById('tokensRow');
+  const recordsCount   = document.getElementById('recordsCount');
+  const recordsList    = document.getElementById('recordsList');
+  const recordsEmpty   = document.getElementById('recordsEmpty');
+
+  // LibInsight elements — Consultation
+  const liConsStartDate       = document.getElementById('liConsStartDate');
+  const liConsInternalNotes   = document.getElementById('liConsInternalNotes');
+  const liConsEnteredBy       = document.getElementById('liConsEnteredBy');
+  const liConsContactMethod   = document.getElementById('liConsContactMethod');
+  const liConsCourseCode      = document.getElementById('liConsCourseCode');
+  const liConsLocation        = document.getElementById('liConsLocation');
+  const liConsPatrons         = document.getElementById('liConsPatrons');
+  const liConsTime            = document.getElementById('liConsTime');
+  const liConsDuration        = document.getElementById('liConsDuration');
+  const liConsTransactionType = document.getElementById('liConsTransactionType');
+  const liConsQuestionType    = document.getElementById('liConsQuestionType');
+  const liConsUserType        = document.getElementById('liConsUserType');
+
+  // LibInsight elements — Instruction
+  const liInstrStartDate         = document.getElementById('liInstrStartDate');
+  const liInstrInternalNotes     = document.getElementById('liInstrInternalNotes');
+  const liInstrEnteredBy         = document.getElementById('liInstrEnteredBy');
+  const liInstrAttendance        = document.getElementById('liInstrAttendance');
+  const liInstrAudience          = document.getElementById('liInstrAudience');
+  const liInstrCourseInstructor  = document.getElementById('liInstrCourseInstructor');
+  const liInstrCourseNumber      = document.getElementById('liInstrCourseNumber');
+  const liInstrDateOfSession     = document.getElementById('liInstrDateOfSession');
+  const liInstrLibraryInstructor = document.getElementById('liInstrLibraryInstructor');
+  const liInstrTopics            = document.getElementById('liInstrTopics');
+  const liInstrTotalTime         = document.getElementById('liInstrTotalTime');
+  const liInstrWorkshopName      = document.getElementById('liInstrWorkshopName');
+
+  // ---- Init selects ----
+  function initSelects() {
+    instrSubjects.innerHTML = '';
+    consSubjectSel.innerHTML = '';
+    INSTRUCTION_SUBJECTS.forEach(s => instrSubjects.appendChild(new Option(s, s)));
+    SUBJECTS.forEach(s => consSubjectSel.appendChild(new Option(s, s)));
+    // Default: Data Service selected
+    consSubjectSel.value = 'Data Service';
+    populateDetails('Data Service');
+
+    // LibInsight selects
+    LI_CONTACT_METHODS.forEach(v => liConsContactMethod.appendChild(new Option(v, v)));
+    LI_LOCATIONS.forEach(v => liConsLocation.appendChild(new Option(v, v)));
+    LI_TIMES.forEach(v => liConsTime.appendChild(new Option(v, v)));
+    LI_TRANSACTION_TYPES.forEach(v => liConsTransactionType.appendChild(new Option(v, v)));
+    LI_QUESTION_TYPES.forEach(v => liConsQuestionType.appendChild(new Option(v, v)));
+    LI_USER_TYPES.forEach(v => liConsUserType.appendChild(new Option(v, v)));
+    LI_USER_TYPES.forEach(v => liInstrAudience.appendChild(new Option(v, v)));
+  }
+
+  function populateDetails(subject) {
+    consDetailSel.innerHTML = '';
+    (DETAILS[subject] || []).forEach(d => consDetailSel.appendChild(new Option(d, d)));
+    if (consDetailSel.options.length) consDetailSel.selectedIndex = 0;
+  }
+
+  // ---- Type switching ----
+  function setType(type) {
+    currentType = type;
+    document.getElementById('btnInstruction').classList.toggle('active', type === 'instruction');
+    document.getElementById('btnConsultation').classList.toggle('active', type === 'consultation');
+    document.getElementById('instrSection').classList.toggle('hidden', type !== 'instruction');
+    document.getElementById('consultSection').classList.toggle('hidden', type !== 'consultation');
+    updateLibInsightVisibility();
+    updatePreview();
+  }
+
+  // ---- LibInsight toggle ----
+  function toggleLibInsight() {
+    libInsightOn = !libInsightOn;
+    const btn = document.getElementById('btnLibInsight');
+    btn.classList.toggle('on', libInsightOn);
+    document.getElementById('libInsightLabel').textContent =
+      'LibInsight Upload Format: ' + (libInsightOn ? 'On' : 'Off');
+    updateLibInsightVisibility();
+  }
+
+  function updateLibInsightVisibility() {
+    document.getElementById('consultLibInsight').classList.toggle('hidden', !(libInsightOn && currentType === 'consultation'));
+    document.getElementById('instrLibInsight').classList.toggle('hidden', !(libInsightOn && currentType === 'instruction'));
+  }
+
+  // Keep the read-only "Internal Notes" mirrors in the LibInsight sections in sync
+  // with the same Subject/Detail/Preptime/Contextual-Notes (or Subjects/Preptime/Notes)
+  // fields that already feed the Live Preview above.
+  function updateLibInsightNotesMirror() {
+    const notes = buildNotes();
+    const clean = (notes && notes !== 'Preptime') ? notes : '';
+    liConsInternalNotes.value = clean;
+    liInstrInternalNotes.value = clean;
+  }
+
+  // ---- Build notes string ----
+  function buildNotes() {
+    const parts = [];
+    if (currentType === 'consultation') {
+      const subj = consSubjectSel.value?.trim();
+      const det  = consDetailSel.value?.trim();
+      const pre  = consPreptime.value ? Math.max(0, parseInt(consPreptime.value) || 0).toString() : '';
+      const ctx  = contextNotes.value?.trim();
+      if (subj) parts.push(subj);
+      if (det)  parts.push(det);
+      parts.push('Preptime');
+      if (pre)  parts.push(pre);
+      if (ctx)  parts.push(ctx);
+    } else {
+      const subs = Array.from(instrSubjects.selectedOptions).map(o => o.value);
+      const pre  = instrPreptime.value ? Math.max(0, parseInt(instrPreptime.value) || 0).toString() : '';
+      const title= sessionTitle.value?.trim();
+      subs.forEach(s => parts.push(s));
+      parts.push('Preptime');
+      if (pre)  parts.push(pre);
+      if (title) parts.push(title);
+    }
+    return parts.filter(p => p !== '').join(';');
+  }
+
+  // ---- Tokenize for color display ----
+  function tokenize() {
+    if (currentType === 'consultation') {
+      const subj = consSubjectSel.value?.trim();
+      const det  = consDetailSel.value?.trim();
+      const pre  = consPreptime.value ? Math.max(0, parseInt(consPreptime.value) || 0).toString() : null;
+      const ctx  = contextNotes.value?.trim();
+      const tokens = [];
+      if (subj) tokens.push({ text: subj, cls: 'field' });
+      if (det)  tokens.push({ text: det,  cls: 'field' });
+      tokens.push({ text: 'Preptime', cls: 'keyword' });
+      if (pre !== null && pre !== '') tokens.push({ text: pre + ' min', cls: 'keyword' });
+      else tokens.push({ text: 'preptime?', cls: 'empty' });
+      if (ctx)  tokens.push({ text: ctx,  cls: 'context' });
+      return tokens;
+    } else {
+      const subs = Array.from(instrSubjects.selectedOptions).map(o => o.value);
+      const pre  = instrPreptime.value ? Math.max(0, parseInt(instrPreptime.value) || 0).toString() : null;
+      const title= sessionTitle.value?.trim();
+      const tokens = [];
+      if (subs.length) subs.forEach(s => tokens.push({ text: s, cls: 'field' }));
+      else tokens.push({ text: 'no subject', cls: 'empty' });
+      tokens.push({ text: 'Preptime', cls: 'keyword' });
+      if (pre !== null && pre !== '') tokens.push({ text: pre + ' min', cls: 'keyword' });
+      else tokens.push({ text: 'preptime?', cls: 'empty' });
+      if (title) tokens.push({ text: title, cls: 'context' });
+      else tokens.push({ text: 'no title', cls: 'empty' });
+      return tokens;
+    }
+  }
+
+  // ---- Update live preview ----
+  function updatePreview() {
+    const notes = buildNotes();
+    if (notes && notes !== 'Preptime') {
+      outputDisplay.textContent = notes;
+      outputDisplay.classList.remove('empty');
+    } else {
+      outputDisplay.textContent = 'Start filling in fields…';
+      outputDisplay.classList.add('empty');
+    }
+
+    // Render tokens
+    const tokens = tokenize();
+    tokensRow.innerHTML = '';
+    tokens.forEach((t, i) => {
+      const span = document.createElement('span');
+      span.className = 'token ' + t.cls;
+      span.textContent = t.text;
+      tokensRow.appendChild(span);
+      if (i < tokens.length - 1) {
+        const sep = document.createElement('span');
+        sep.className = 'token separator';
+        sep.textContent = ';';
+        tokensRow.appendChild(sep);
+      }
+    });
+
+    updateLibInsightNotesMirror();
+  }
+
+  // ---- Listen to all inputs ----
+  [consSubjectSel, consDetailSel, consPreptime, contextNotes,
+   instrSubjects, instrPreptime, sessionTitle].forEach(el => {
+    el.addEventListener('input', updatePreview);
+    el.addEventListener('change', updatePreview);
+  });
+  consSubjectSel.addEventListener('change', () => {
+    populateDetails(consSubjectSel.value);
+    updatePreview();
+  });
+
+  // ---- Copy ----
+  document.getElementById('copyBtn').addEventListener('click', () => {
+    const text = buildNotes();
+    if (!text || text === 'Preptime') { showToast('Nothing to copy yet.'); return; }
+    if (navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(text)
+        .then(() => showToast('Copied!', true))
+        .catch(() => fallbackCopy(text));
+    } else { fallbackCopy(text); }
+  });
+  function fallbackCopy(text) {
+    const ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); showToast('Copied!', true); }
+    catch { showToast('Copy failed — select manually.'); }
+    ta.remove();
+  }
+
+  // ---- Save / Records ----
+  const STORAGE_KEY = 'libstats_notes_v2';
+  function loadSaved() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); }
+    catch { return []; }
+  }
+  function saveSaved(recs) { localStorage.setItem(STORAGE_KEY, JSON.stringify(recs)); }
+
+  function clampNum(val, max) {
+    if (val === '' || val === null || val === undefined) return '';
+    const n = Math.min(max, Math.max(0, parseInt(val) || 0));
+    return n.toString();
+  }
+  function multiVals(sel) { return Array.from(sel.selectedOptions).map(o => o.value); }
+
+  function buildLiConsultationFields(internalNotes) {
+    return {
+      "Start Date": liConsStartDate.value || '',
+      "Internal Notes": internalNotes,
+      "Entered By": liConsEnteredBy.value?.trim() || '',
+      "IP Address": '',
+      "Contact Method": liConsContactMethod.value || '',
+      "Course Code / Subject": liConsCourseCode.value?.trim() || '',
+      "Location": liConsLocation.value || '',
+      "Number of Patrons": clampNum(liConsPatrons.value, 999),
+      "Time": liConsTime.value || '',
+      "Time on Consultation? (# minutes)": clampNum(liConsDuration.value, 999),
+      "Transaction Type": liConsTransactionType.value || '',
+      "Type of Question": liConsQuestionType.value || '',
+      "Type of User": multiVals(liConsUserType).join('; ')
+    };
+  }
+
+  function buildLiInstructionFields(internalNotes) {
+    return {
+      "Start Date": liInstrStartDate.value || '',
+      "Internal Notes": internalNotes,
+      "Entered By": liInstrEnteredBy.value?.trim() || '',
+      "IP Address": '',
+      "Attendance": clampNum(liInstrAttendance.value, 999),
+      "Audience": multiVals(liInstrAudience).join('; '),
+      "Course Instructor": liInstrCourseInstructor.value?.trim() || '',
+      "Course Number": liInstrCourseNumber.value?.trim() || '',
+      "Date of Session": liInstrDateOfSession.value || '',
+      "Library Instructor": liInstrLibraryInstructor.value?.trim() || '',
+      "Topics covered": liInstrTopics.value?.trim() || '',
+      "Total time": clampNum(liInstrTotalTime.value, 999),
+      "Workshop name": liInstrWorkshopName.value?.trim() || ''
+    };
+  }
+
+  document.getElementById('saveBtn').addEventListener('click', () => {
+    const notes = buildNotes();
+    if (!notes || notes === 'Preptime') { showToast('Nothing to save yet.'); return; }
+    const recs = loadSaved();
+    if (libInsightOn) {
+      const fields = currentType === 'consultation'
+        ? buildLiConsultationFields(notes)
+        : buildLiInstructionFields(notes);
+      recs.unshift({ ts: Date.now(), type: currentType, notes, libinsight: true, fields });
+    } else {
+      recs.unshift({ ts: Date.now(), type: currentType, notes });
+    }
+    saveSaved(recs);
+    renderRecords();
+    showToast('Record saved!', true);
+  });
+
+  function deleteRecord(idx) {
+    const recs = loadSaved();
+    recs.splice(idx, 1);
+    saveSaved(recs);
+    renderRecords();
+    showToast('Record deleted.');
+  }
+
+  function renderRecords() {
+    const recs = loadSaved();
+    recordsCount.textContent = recs.length + ' record' + (recs.length !== 1 ? 's' : '');
+    if (recs.length === 0) {
+      recordsEmpty.style.display = 'block';
+      recordsList.innerHTML = '';
+      return;
+    }
+    recordsEmpty.style.display = 'none';
+    recordsList.innerHTML = '';
+    recs.forEach((r, i) => {
+      if (r.libinsight) {
+        recordsList.appendChild(buildLiRecordCard(r, i));
+      } else {
+        recordsList.appendChild(buildPlainRecordRow(r, i));
+      }
+    });
+  }
+
+  function recordHeaderBits(r, i) {
+    const date = document.createElement('div');
+    date.className = 'record-date';
+    const d = new Date(r.ts);
+    date.textContent = d.toLocaleDateString('en-CA', { month:'short', day:'numeric' }) + '\n' +
+      d.toLocaleTimeString('en-CA', { hour:'2-digit', minute:'2-digit', hour12: false });
+    date.style.whiteSpace = 'pre';
+
+    const type = document.createElement('div');
+    type.className = 'record-type ' + r.type;
+    type.textContent = r.type === 'consultation' ? 'consult' : 'instruct';
+
+    const del = document.createElement('button');
+    del.className = 'record-del';
+    del.textContent = '×';
+    del.title = 'Delete';
+    del.onclick = () => deleteRecord(i);
+
+    return { date, type, del };
+  }
+
+  function buildPlainRecordRow(r, i) {
+    const row = document.createElement('div');
+    row.className = 'record-row';
+    const { date, type, del } = recordHeaderBits(r, i);
+
+    const notes = document.createElement('div');
+    notes.className = 'record-notes';
+    notes.textContent = r.notes;
+
+    row.appendChild(date); row.appendChild(type);
+    row.appendChild(notes); row.appendChild(del);
+    return row;
+  }
+
+  function buildLiRecordCard(r, i) {
+    const card = document.createElement('div');
+    card.className = 'li-record-card';
+    const { date, type, del } = recordHeaderBits(r, i);
+
+    const head = document.createElement('div');
+    head.className = 'li-record-head';
+    head.appendChild(date); head.appendChild(type); head.appendChild(del);
+    card.appendChild(head);
+
+    const grid = document.createElement('div');
+    grid.className = 'li-fields';
+    const columns = r.type === 'consultation' ? LI_CONS_COLUMNS : LI_INSTR_COLUMNS;
+    const fullWidthLabels = new Set(['Internal Notes', 'Topics covered']);
+    columns.forEach(col => {
+      const wrap = document.createElement('div');
+      wrap.className = 'li-field' + (fullWidthLabels.has(col) ? ' li-full' : '');
+
+      const label = document.createElement('div');
+      label.className = 'li-field-label';
+      label.textContent = col;
+
+      const value = document.createElement('div');
+      const v = (r.fields && r.fields[col] !== undefined) ? r.fields[col] : '';
+      value.className = 'li-field-value' + (v === '' ? ' empty' : '');
+      value.textContent = v === '' ? '—' : v;
+
+      wrap.appendChild(label); wrap.appendChild(value);
+      grid.appendChild(wrap);
+    });
+    card.appendChild(grid);
+    return card;
+  }
+
+  function clearSaved() {
+    if (!confirm('Clear all saved records?')) return;
+    localStorage.removeItem(STORAGE_KEY);
+    renderRecords();
+    showToast('All records cleared.');
+  }
+
+  // ---- Export ----
+  function csvFromRows(rows) {
+    return rows.map(row => row.map(c => '"' + String(c ?? '').replace(/"/g,'""') + '"').join(',')).join('\r\n');
+  }
+
+  function exportCSV() {
+    const recs = loadSaved();
+    if (!recs.length) { showToast('No records to export.'); return; }
+    const rows = [['Date','Time','Type','Notes']];
+    recs.forEach(r => {
+      const d = new Date(r.ts);
+      rows.push([
+        d.toLocaleDateString('en-CA'),
+        d.toLocaleTimeString('en-CA', { hour12: false }),
+        r.type,
+        r.notes
+      ]);
+    });
+    const csv = csvFromRows(rows);
+    download('libstats_notes.csv', 'text/csv;charset=utf-8;', '\uFEFF' + csv);
+    showToast('CSV exported!', true);
+  }
+
+  function exportJSON() {
+    const recs = loadSaved();
+    if (!recs.length) { showToast('No records to export.'); return; }
+    const out = recs.map(r => ({
+      date: new Date(r.ts).toISOString(),
+      type: r.type,
+      notes: r.notes,
+      libinsight: !!r.libinsight,
+      fields: r.libinsight ? r.fields : parseNotes(r.notes)
+    }));
+    download('libstats_notes.json', 'application/json', JSON.stringify(out, null, 2));
+    showToast('JSON exported!', true);
+  }
+
+  function exportMarkdown() {
+    const recs = loadSaved();
+    if (!recs.length) { showToast('No records to export.'); return; }
+    let md = '# LibStats Notes Export\n\n';
+    md += '_Exported: ' + new Date().toLocaleString('en-CA') + '_\n\n';
+    md += '| Date | Time | Type | Notes |\n|------|------|------|-------|\n';
+    recs.forEach(r => {
+      const d = new Date(r.ts);
+      md += `| ${d.toLocaleDateString('en-CA')} | ${d.toLocaleTimeString('en-CA', { hour12: false })} | ${r.type} | \`${r.notes}\` |\n`;
+    });
+    download('libstats_notes.md', 'text/markdown', md);
+    showToast('Markdown exported!', true);
+  }
+
+  // Exports ONLY the Internal Notes field from every saved record (both plain
+  // and LibInsight-format records use the same underlying notes string).
+  function exportNotesOnly() {
+    const recs = loadSaved();
+    if (!recs.length) { showToast('No records to export.'); return; }
+    const rows = [['Internal Notes']];
+    recs.forEach(r => rows.push([r.notes]));
+    const csv = csvFromRows(rows);
+    download('libstats_internal_notes.csv', 'text/csv;charset=utf-8;', '\uFEFF' + csv);
+    showToast('Internal Notes exported!', true);
+  }
+
+  // Exports saved LibInsight-format records of the given type using the exact
+  // column headers from the LibInsight upload templates, ready for upload.
+  function exportLibInsightCSV(type) {
+    const recs = loadSaved().filter(r => r.libinsight && r.type === type);
+    if (!recs.length) { showToast('No LibInsight ' + type + ' records to export.'); return; }
+    const columns = type === 'consultation' ? LI_CONS_COLUMNS : LI_INSTR_COLUMNS;
+    const rows = [columns];
+    recs.forEach(r => rows.push(columns.map(col => r.fields?.[col] ?? '')));
+    const csv = csvFromRows(rows);
+    const filename = (type === 'consultation' ? 'Consultation' : 'Instruction') + '_libinsight.csv';
+    download(filename, 'text/csv;charset=utf-8;', '\uFEFF' + csv);
+    showToast('LibInsight CSV exported!', true);
+  }
+
+  function parseNotes(notes) {
+    const parts = notes.split(';');
+    const prepIdx = parts.indexOf('Preptime');
+    if (prepIdx === -1) return { raw: parts };
+    return {
+      fields: parts.slice(0, prepIdx),
+      preptime: parts[prepIdx + 1] || null,
+      context: parts.slice(prepIdx + 2).join(';') || null
+    };
+  }
+
+  function download(filename, mime, content) {
+    const a = document.createElement('a');
+    a.href = 'data:' + mime + ',' + encodeURIComponent(content);
+    a.download = filename;
+    document.body.appendChild(a); a.click(); a.remove();
+  }
+
+  // ---- Toggle records panel ----
+  function toggleRecords() {
+    const body = document.getElementById('recordsBody');
+    const actions = document.getElementById('recordsActions');
+    const collapsed = body.style.display === 'none';
+    body.style.display = collapsed ? '' : 'none';
+    actions.style.display = collapsed ? '' : 'none';
+  }
+
+  // ---- Toast ----
+  function showToast(msg, green = false) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'toast show' + (green ? ' green' : '');
+    clearTimeout(t._timer);
+    t._timer = setTimeout(() => t.className = 'toast', 2200);
+  }
+
+  // ---- Download this tool as a standalone file ----
+  function downloadTool() {
+    const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+    download('libinsight-notes-builder.html', 'text/html;charset=utf-8;', html);
+    showToast('Tool downloaded!', true);
+  }
+  document.getElementById('downloadToolBtn').addEventListener('click', downloadTool);
+
+  // ---- Boot ----
+  initSelects();
+  setType('consultation');
+  renderRecords();
+  updatePreview();
+</script>
+</body>
+</html>

@@ -797,7 +797,7 @@
     <div class="checklist" id="checklist"></div>
 
     <div class="output-actions">
-      <button type="button" class="btn btn-primary" onclick="copyClipboard()">Copy to clipboard</button>
+      <button type="button" class="btn btn-primary" onclick="copyClipboard(event)">Copy to clipboard</button>
       <button type="button" class="btn" onclick="downloadReadme()">Download README.txt</button>
       <button type="button" class="btn" onclick="saveDraft()">Save draft (.json)</button>
       <button type="button" class="btn" onclick="if(confirm('Clear all fields and start over?')) resetAll();">Start over</button>
@@ -1116,7 +1116,7 @@ function render(){
     </div>
     <pre class="code-wrap">${escapeHtml(text)}</pre>
     <div class="copy-row">
-      <button type="button" class="btn" onclick="copyClipboard()">Copy to clipboard</button>
+      <button type="button" class="btn" onclick="copyClipboard(event)">Copy to clipboard</button>
     </div>`;
   [prev1, prev2, prev3].forEach(p => { if(p) p.innerHTML = previewHTML; });
 
@@ -1143,16 +1143,37 @@ function escapeHtml(str){
 /* ============================================================
    Actions: copy / download / save-load draft / reset
    ============================================================ */
-function copyClipboard(){
+function copyClipboard(clickEvent){
   const text = buildReadme();
-  navigator.clipboard.writeText(text).then(() => {
-    const btn = event.target;
+  const btn = clickEvent.currentTarget;
+  const showCopied = () => {
     const original = btn.textContent;
     btn.textContent = 'Copied!';
     setTimeout(() => btn.textContent = original, 1500);
-  }).catch(() => {
+  };
+  const fallbackCopy = () => {
+    const helper = document.createElement('textarea');
+    helper.value = text;
+    helper.setAttribute('readonly', '');
+    helper.style.position = 'fixed';
+    helper.style.opacity = '0';
+    document.body.appendChild(helper);
+    helper.select();
+    const copied = document.execCommand('copy');
+    helper.remove();
+    return copied;
+  };
+
+  if(navigator.clipboard && window.isSecureContext){
+    navigator.clipboard.writeText(text).then(showCopied).catch(() => {
+      if(!fallbackCopy()) alert('Could not copy automatically - please select and copy the text manually.');
+      else showCopied();
+    });
+  } else if(fallbackCopy()) {
+    showCopied();
+  } else {
     alert('Could not copy automatically - please select and copy the text manually.');
-  });
+  }
 }
 
 function downloadReadme(){
