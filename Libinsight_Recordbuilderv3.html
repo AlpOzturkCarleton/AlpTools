@@ -406,12 +406,12 @@
       align-items: center;
       padding: .6rem 1rem;
       border-bottom: 1px solid var(--rule);
-      font-size: .78rem;
+      font-size: .72rem;
       transition: background .1s;
     }
     .record-row:hover { background: var(--card-2); }
     .record-row:last-child { border-bottom: none; }
-    .record-date { color: var(--ink-mid); font-family: var(--mono); font-size: .7rem; }
+    .record-date { color: var(--ink-mid); font-family: var(--mono); font-size: .64rem; white-space: nowrap; }
     .record-type {
       font-family: var(--mono);
       font-size: .68rem;
@@ -421,28 +421,34 @@
     }
     .record-type.instruction { background: var(--gold-dim); color: var(--gold); border: 1px solid rgba(169,120,31,.35); }
     .record-type.consultation { background: var(--ledger-dim); color: var(--ledger); border: 1px solid rgba(63,107,82,.35); }
-    .record-notes { font-family: var(--mono); font-size: .75rem; color: var(--ink); word-break: break-all; }
+    .record-notes { font-family: var(--mono); font-size: .68rem; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .upload-record {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)) 28px;
+      display: flex;
+      align-items: center;
       gap: .5rem;
-      padding: .75rem 1rem;
+      padding: .5rem 1rem;
       border-bottom: 1px solid var(--rule);
       overflow-x: auto;
+      white-space: nowrap;
     }
-    .upload-cell { min-width: 110px; }
+    .upload-cell {
+      flex: 0 0 auto;
+      padding-right: .5rem;
+      border-right: 1px solid var(--rule);
+    }
     .upload-cell-label {
-      display: block;
+      display: inline;
       color: var(--ink-faint);
       font-family: var(--mono);
-      font-size: .62rem;
+      font-size: .56rem;
       line-height: 1.25;
-      margin-bottom: .2rem;
+      margin-right: .25rem;
     }
+    .upload-cell-label::after { content: ':'; }
     .upload-cell-value {
-      display: block;
+      display: inline;
       color: var(--ink);
-      font-size: .74rem;
+      font-size: .66rem;
       overflow-wrap: anywhere;
     }
     .upload-record-del { align-self: center; }
@@ -556,12 +562,10 @@
       <div class="field-group" style="margin-bottom:.75rem"><label for="consEnteredBy">Entered By</label><input id="consEnteredBy" type="text" placeholder="Last Name, First Name" /></div>
       <div class="field-group" style="margin-bottom:.75rem"><label for="consContactMethod">Contact Method</label><select id="consContactMethod"><option value="">Select one</option><option>In-Person</option><option>Email</option><option>Virtual</option></select></div>
       <div class="field-group" style="margin-bottom:.75rem"><label for="consCourse">Course Code/Subject</label><input id="consCourse" type="text" /></div>
-      <div class="field-group" style="margin-bottom:.75rem"><label for="consLocation">Location</label><select id="consLocation"><option value="">Select one</option><option>Research Help - Floor 2</option><option>Computer Lab (Room 103)</option><option>Other</option></select></div>
+      <div class="field-group" style="margin-bottom:.75rem"><label for="consLocation">Location</label><select id="consLocation"><option value="">Select one</option><option>Computer Lab (Room 103)</option><option>Other</option></select></div>
       <div class="field-group" style="margin-bottom:.75rem"><label for="consPatrons">Number of Patrons</label><input id="consPatrons" type="number" min="0" max="999" step="1" /></div>
       <div class="field-group" style="margin-bottom:.75rem"><label for="consTime">Time</label><select id="consTime"><option value="">Select one</option><option>6am-8am</option><option>8am-10am</option><option>10am-12pm</option><option>12pm-2pm</option><option>2pm-4pm</option><option>4pm-6pm</option><option>6pm-6am</option></select></div>
       <div class="field-group" style="margin-bottom:.75rem"><label for="consDuration">Time on Consultation</label><input id="consDuration" type="number" min="0" max="999" step="1" /></div>
-      <div class="field-group" style="margin-bottom:.75rem"><label for="consTransaction">Transaction Type</label><select id="consTransaction"><option value="">Select one</option><option>Reference / research help</option><option>Reference / In-depth (&gt;15 min.)</option><option>Consultation</option><option>Directional</option><option>Referral</option><option>IT help</option></select></div>
-      <div class="field-group" style="margin-bottom:.75rem"><label for="consQuestion">Type of Question</label><select id="consQuestion"><option value="">Select one</option><option>Subject Research Help</option><option>Data</option><option>Government Information</option><option>Maps/GIS</option><option>Knowledge Synthesis</option><option>Citation</option><option>Book Arts</option><option>Archives</option><option>Rare Books</option><option>Ottawa Resource Collection</option><option>Other</option></select></div>
       <div class="field-group"><label for="consUser">Type of User</label><select id="consUser" multiple><option>Undergraduate Student</option><option>Graduate Student</option><option>Faculty</option><option>Staff</option><option>Alumni</option><option>External</option><option>Other</option></select><span class="field-hint">Ctrl/Cmd + click to select multiple.</span></div>
       <div class="upload-mode-note">Internal Notes combines Subject, Detail, Preptime, and Contextual Notes.</div>
     </div>
@@ -599,6 +603,8 @@
       <div class="field-group"><label for="instrWorkshopName">Workshop Name</label><input id="instrWorkshopName" type="text" /></div>
       <div class="upload-mode-note">Internal Notes combines Subjects, Preptime, and Internal Notes.</div>
     </div>
+
+    <button class="btn primary" id="saveQuestionnaireBtn" type="button">Save Record</button>
 
   </aside>
 
@@ -769,8 +775,8 @@
         'Number of Patrons': boundedNumber('consPatrons'),
         'Time': document.getElementById('consTime').value,
         'Time on Consultation? (# minutes)': boundedNumber('consDuration'),
-        'Transaction Type': document.getElementById('consTransaction').value,
-        'Type of Question': document.getElementById('consQuestion').value,
+        'Transaction Type': 'Consultation',
+        'Type of Question': 'Data',
         'Type of User': selectedValues('consUser')
       };
     }
@@ -900,7 +906,7 @@
   }
   function saveSaved(recs) { localStorage.setItem(STORAGE_KEY, JSON.stringify(recs)); }
 
-  document.getElementById('saveBtn').addEventListener('click', () => {
+  function saveRecord() {
     const notes = buildNotes();
     const row = uploadMode ? uploadRow() : null;
     if (uploadMode ? !uploadHasContent(row) : (!notes || notes === 'Preptime')) { showToast('Nothing to save yet.'); return; }
@@ -909,7 +915,10 @@
     saveSaved(recs);
     renderRecords();
     showToast('Record saved!', true);
-  });
+  }
+
+  document.getElementById('saveBtn').addEventListener('click', saveRecord);
+  document.getElementById('saveQuestionnaireBtn').addEventListener('click', saveRecord);
 
   function deleteRecord(idx) {
     const recs = loadSaved();
@@ -934,6 +943,7 @@
         const table = document.createElement('div');
         table.className = 'upload-record';
         Object.entries(r.row).forEach(([key, value]) => {
+          if (value === '') return;
           const cell = document.createElement('div');
           cell.className = 'upload-cell';
           cell.innerHTML = '<span class="upload-cell-label"></span><span class="upload-cell-value"></span>';
@@ -956,9 +966,8 @@
       const date = document.createElement('div');
       date.className = 'record-date';
       const d = new Date(r.ts);
-      date.textContent = d.toLocaleDateString('en-CA', { month:'short', day:'numeric' }) + '\n' +
+      date.textContent = d.toLocaleDateString('en-CA', { month:'short', day:'numeric' }) + ' ' +
         d.toLocaleTimeString('en-CA', { hour:'2-digit', minute:'2-digit', hour12: false });
-      date.style.whiteSpace = 'pre';
 
       const type = document.createElement('div');
       type.className = 'record-type ' + r.type;
