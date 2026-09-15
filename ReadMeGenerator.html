@@ -754,7 +754,7 @@
 
     <section class="field-block">
       <h3><span class="idx">3.1</span> File List <span class="req">*</span></h3>
-      <p class="help">List every file (and folder) in the dataset with a one-line description of each, or paste in a plain-text folder tree. The <a href="https://alpozturkcarleton.github.io/AlpTools/folder-structure-generatorv3.html" target="_blank" rel="noopener">Folder Structure Generator Tool</a> can generate a text folder-tree diagram for you to paste here.</p>
+      <p class="help">List every file (and folder) in the dataset with a one-line description of each, or paste in a plain-text folder tree. The <a href="https://alpozturkcarleton.github.io/AlpTools/folder-structure-generatorv4.html" target="_blank" rel="noopener">Folder Structure Generator Tool</a> can generate a text folder-tree diagram for you to paste here.</p>
       <textarea id="f-filelist" rows="6" aria-label="File list" oninput="render()" placeholder="data/&#10;├── raw/2025-06-01_survey-raw.csv - unprocessed survey export&#10;├── processed/2025-06-01_survey-clean.csv - cleaned dataset used in analysis&#10;└── 2025-06-01_codebook.csv - variable definitions for the files above"></textarea>
     </section>
 
@@ -1028,7 +1028,7 @@ function buildReadme(){
 
   let out = '';
   out += '#'.repeat(100) + '\n';
-  out += `${title.toUpperCase()} - This README file was generated on ${today} using Carleton University's README Generator \n`;
+  out += `${title.toUpperCase()} - This README file was generated on ${today} using MacOdrum Library's ReadMe Generator \n`;
   out += '#'.repeat(100) + '\n';
   out += rule + '\n\n';
 
