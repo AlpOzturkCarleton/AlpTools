@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Data Deposit Checklist Tool</title>
+<style>
+:root{--bg:#f6f4f1;--bg-deep:#fff;--panel:#fff;--panel-2:#fbfaf8;--line:rgba(17,17,17,.09);--line-strong:rgba(17,17,17,.16);--red:#A6192E;--red-dim:#7A1322;--text:#1a1a1a;--muted:#5c5f63;--faint:#8a8d91;--success:#1e6b3c;--wave:rgba(17,17,17,.045);
+--mono:'SF Mono','Cascadia Code','JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;--sans:'Segoe UI',-apple-system,BlinkMacSystemFont,Roboto,Inter,sans-serif;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17181b;--bg-deep:#1e2024;--panel:#202226;--panel-2:#1c1e22;--line:rgba(255,255,255,.1);--line-strong:rgba(255,255,255,.2);--red:#ff6b81;--red-dim:#d9556a;--text:#ececec;--muted:#a7abb1;--faint:#7d8187;--success:#4cc38a;--wave:rgba(255,255,255,.04);color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#17181b;--bg-deep:#1e2024;--panel:#202226;--panel-2:#1c1e22;--line:rgba(255,255,255,.1);--line-strong:rgba(255,255,255,.2);--red:#ff6b81;--red-dim:#d9556a;--text:#ececec;--muted:#a7abb1;--faint:#7d8187;--success:#4cc38a;--wave:rgba(255,255,255,.04);color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100%}
+body{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='24' viewBox='0 0 120 24'%3E%3Cpath d='M0 12c10 0 10-9 20-9s10 9 20 9 10-9 20-9 10 9 20 9 10-9 20-9 10 9 20 9' fill='none' stroke='%23888' stroke-opacity='.12' stroke-width='1.4'/%3E%3C/svg%3E");background-size:120px 24px;background-attachment:fixed}
+body::before{content:"";position:fixed;inset:0;background:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(166,25,46,.07),transparent 60%);pointer-events:none;z-index:0}
+header{position:relative;z-index:1;padding:42px 24px 20px;text-align:center}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.28em;text-transform:uppercase;color:var(--red-dim);margin:0 0 10px}
+h1{font-family:var(--mono);font-size:clamp(24px,4vw,36px);font-weight:700;margin:0 0 10px;letter-spacing:-.01em}
+h1 .accent{color:var(--red)}
+header p.sub{font-size:14px;color:var(--muted);max-width:560px;margin:0 auto;line-height:1.55}
+.wave{display:block;width:100%;max-width:340px;height:14px;margin:12px auto 0}
+main{position:relative;z-index:1;max-width:860px;margin:0 auto;padding:8px 20px 30px}
+.panel{position:relative;background:linear-gradient(180deg,var(--panel),var(--panel-2));border:1px solid var(--line-strong);border-top:3px solid var(--red);padding:22px}
+.panel::before,.panel::after,.cbl,.cbr{content:"";position:absolute;width:12px;height:12px;border:0 solid var(--red)}
+.panel::before{top:-1px;left:-1px;border-top-width:2px;border-left-width:2px}
+.panel::after{top:-1px;right:-1px;border-top-width:2px;border-right-width:2px}
+.cbl{bottom:-1px;left:-1px;border-bottom-width:2px;border-left-width:2px}
+.cbr{bottom:-1px;right:-1px;border-bottom-width:2px;border-right-width:2px}
+.prog{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--panel);padding:2px 0 12px;margin-bottom:6px;border-bottom:1px solid var(--line)}
+.stat{display:flex;justify-content:space-between;align-items:center;gap:10px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.track{height:8px;background:var(--bg-deep);border:1px solid var(--line-strong)}
+#fill{height:100%;width:0;background:var(--red);transition:width .25s}
+#fill.full{background:var(--success)}
+.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.btn-solid{font-family:var(--mono);font-size:11.5px;background:var(--red);color:#fff;border:none;padding:7px 14px;font-weight:700;letter-spacing:.03em;cursor:pointer}
+:root:not([data-theme="light"]) .btn-solid{color:#17181b}
+.btn-solid:hover{filter:brightness(.88)}
+.btn-mini{font-family:var(--mono);font-size:11px;background:transparent;border:1px solid var(--line-strong);color:var(--muted);padding:6px 11px;cursor:pointer}
+.btn-mini:hover,.btn-mini.on{color:var(--red);border-color:var(--red-dim)}
+h2{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--red);margin:24px 0 10px;font-weight:700;padding-left:9px;border-left:3px solid var(--red)}
+.item{display:flex;gap:12px;border:1px solid var(--line);border-left:3px solid var(--red);background:var(--bg-deep);padding:11px 12px;margin:8px 0}
+.item.done{opacity:.55}
+.item.done .t{text-decoration:line-through}
+.item input{width:18px;height:18px;margin-top:3px;flex:none;accent-color:var(--red);cursor:pointer}
+.item label{flex:1;cursor:pointer}
+.t{font-size:14.5px;font-weight:600}
+.req{color:var(--red);font-weight:700}
+.d{font-size:12.5px;line-height:1.55;color:var(--muted);margin-top:3px}
+.src{font-family:var(--mono);font-size:10.5px;color:var(--faint);margin-top:6px;letter-spacing:.04em}
+.note{font-family:var(--mono);font-size:12px;line-height:1.6;color:var(--muted);border:1px dashed var(--red-dim);padding:12px 14px;margin-top:22px}
+.legend{font-family:var(--mono);font-size:11px;color:var(--faint);margin:0 0 4px}
+footer{position:relative;z-index:1;max-width:860px;margin:0 auto;padding:10px 20px 48px;font-size:12px;line-height:1.65;color:var(--muted)}
+footer h3{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--red);margin:0 0 8px}
+footer .box{border-top:1px solid var(--line-strong);padding-top:18px}
+footer ol{margin:0 0 14px;padding-left:20px}footer li{margin-bottom:6px}
+footer a{color:var(--red)}
+footer .fine{font-family:var(--mono);font-size:11px;color:var(--faint);text-align:center;margin-top:18px}
+header{position:relative}
+.header-download-btn{position:absolute;top:22px;right:24px;font-family:var(--mono);font-size:11px;letter-spacing:.04em;background:var(--bg-deep);border:1px solid var(--line-strong);color:var(--muted);padding:8px 13px;cursor:pointer;white-space:nowrap}
+.header-download-btn:hover{color:var(--red);border-color:var(--red-dim)}
+@media (max-width:640px){.header-download-btn{position:static;display:block;margin:0 auto 18px}}
+.tools{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.tool{font-family:var(--mono);font-size:11px;color:var(--red);border:1px solid var(--red-dim);padding:4px 9px;text-decoration:none}
+.tool:hover{background:rgba(166,25,46,.1)}
+.src a{color:var(--faint);text-decoration:underline dotted;text-underline-offset:3px}
+.src a:hover{color:var(--red)}
+.help{margin-top:22px;border:1px solid var(--line-strong);border-left:3px solid var(--red);background:var(--bg-deep);padding:16px 18px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
+.help p{margin:0;font-size:13px;line-height:1.55;color:var(--muted);flex:1 1 280px}
+.help strong{color:var(--text)}
+.help a.btn-solid{text-decoration:none;display:inline-block}
+@media print{.header-download-btn{display:none}}
+@media print{.prog .actions,.wave{display:none}.prog{position:static}body{background:#fff}body::before{display:none}.item{break-inside:avoid}}
+</style>
+</head>
+<body>
+<header>
+  <button type="button" class="header-download-btn" id="dl" title="Download this tool as a standalone HTML file" hidden>&#11123; Download this Tool</button>
+  <p class="eyebrow">Research Data Services</p>
+  <h1>Data Deposit Checklist <span class="accent">Tool</span></h1>
+  <p class="sub">Step through every task before and during deposit to a Dataverse repository. Your progress is saved in this browser.</p>
+  <svg class="wave" viewBox="0 0 340 14" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M0 7c14 0 14-6 28-6s14 6 28 6 14-6 28-6 14 6 28 6 14-6 28-6 14 6 28 6 14-6 28-6 14 6 28 6 14-6 28-6 14 6 28 6" fill="none" stroke="#A6192E" stroke-width="1.6" stroke-linecap="round"/></svg>
+</header>
+
+<main>
+<section class="panel">
+  <span class="cbl"></span><span class="cbr"></span>
+  <div class="prog">
+    <div class="stat"><span id="count">0 of 0 complete</span><span id="pct">0%</span></div>
+    <div class="track"><div id="fill"></div></div>
+    <div class="actions">
+      <button class="btn-mini" id="hide">Hide completed</button>
+      <button class="btn-mini" id="reset">Reset</button>
+      <button class="btn-solid" id="print">Print</button>
+    </div>
+  </div>
+  <p class="legend"><span class="req">*</span> mandatory for McMaster Dataverse submissions. Confirm requirements with your own institution’s repository.</p>
+  <div id="list"></div>
+  <div class="note"><strong>Not making your data open?</strong> You can restrict access to data files while keeping the metadata open, so your research is still findable.</div>
+  <div class="help">
+    <p><strong>Need help depositing your data?</strong> Carleton’s Data Services team can support you with preparing, describing and depositing datasets.</p>
+    <a class="btn-solid" href="mailto:dataservices@carleton.ca?subject=Data%20deposit%20assistance">&#9993; Contact Data Services</a>
+  </div>
+</section>
+</main>
+
+<footer>
+<div class="box">
+  <h3>Citation &amp; Accreditation</h3>
+  <p>This checklist consolidates and paraphrases guidance from the following library resources, and is credited to their authors and institutions:</p>
+  <ol>
+    <li>MacOdrum Library, Carleton University, Data Services. <em>Preparing Data for Deposit or Storage</em> (content last reviewed August 18, 2026). <a href="https://library.carleton.ca/guides/help/preparing-data-deposit-or-storage" target="_blank" rel="noopener">library.carleton.ca</a></li>
+    <li>UNBC Library. <em>2024 UNBC Borealis Depositor Checklist</em>. <a href="https://libguides.unbc.ca/Borealis/DataPrep" target="_blank" rel="noopener">libguides.unbc.ca/Borealis</a>. Supporting guides: <a href="https://libguides.unbc.ca/Borealis/DataDescription" target="_blank" rel="noopener">Data Description</a>, <a href="https://libguides.unbc.ca/Borealis/DataPrep" target="_blank" rel="noopener">Data Preparation</a>, <a href="https://libguides.unbc.ca/Borealis/FileNaming" target="_blank" rel="noopener">File Naming</a>, <a href="https://libguides.unbc.ca/Borealis/DataLicense" target="_blank" rel="noopener">Data License</a>.</li>
+    <li>McMaster University Library. <em>McMaster Dataverse Depositor Checklist</em>, supplementing the McMaster Dataverse Data Deposit Guidelines and Deposit Walkthrough. Evering, D. &amp; Pratt, I. (2023), Research Data Management Services, McMaster University. <a href="https://macsphere.mcmaster.ca/handle/11375/29866" target="_blank" rel="noopener">macsphere.mcmaster.ca</a>.</li>
+  </ol>
+  <p><strong>Accreditation:</strong> All original content, wording and practices belong to MacOdrum Library (Carleton University), UNBC Library and McMaster University Library. This tool is an independent adaptation and is not an official publication or endorsement of any of these institutions. For deposit support, contact your library’s data services team (Carleton: dataservices@carleton.ca).</p>
+  <p>Related tools: <a href="https://alpozturkcarleton.github.io/AlpTools/ReadMeGenerator.html" target="_blank" rel="noopener">README Generator</a> · <a href="https://alpozturkcarleton.github.io/AlpTools/folder-structure-generatorv4.html" target="_blank" rel="noopener">Folder Structure Generator Tool</a></p>
+  <p class="fine">runs entirely in your browser — nothing here is uploaded</p>
+</div>
+</footer>
+
+<script>
+var SECTIONS=[
+{h:"Before deposit",items:[
+{id:"identify",t:"Identify your data and confirm it may be deposited",d:"Data can be spreadsheets, text, images, video or 3D models. Check that your research ethics clearance or data management plan allows sharing.",s:"c"},
+{id:"pi",t:"Confirm you are the PI, or have the PI’s permission",d:"If you are not the principal investigator, get permission to share and make sure they know the plan.",s:"c"},
+{id:"limits",t:"Check restrictions and requirements on sharing",d:"Grants, journal data policies, research networks, and legal, ethical or intellectual property limits. Note the data size (MB/GB/TB).",s:"c"},
+{id:"repo",t:"Choose the right repository",d:"Generalist repositories may need extra description and cleaned (not raw) data. Discipline-specific repositories have their own rules; try re3data.org or the Data Repository Navigator.",s:"c",l:["repo"]},
+{id:"readme",t:"README",r:1,d:"Develop a README to submit with the dataset. McMaster requires information equivalent to sections 1–3 of its template; UNBC requires its template as a starting point, and extra detail is welcome.",s:"cum",l:["rg"]},
+{id:"docs",t:"Gather documentation",d:"Data dictionary, data model, codebook, interview guide, lab notebooks, file naming conventions and collection methodology. Enough detail that users need not download the data to judge its relevance.",s:"cum",l:["rg"]},
+{id:"anon",t:"Anonymization / de-identification",r:1,d:"UNBC Borealis and McMaster Dataverse do not accept confidential or sensitive data. Remove, replace or redact until de-identified. CU Dataverse also requires full anonymization.",s:"cum"},
+{id:"ethics",t:"Ethics approval",r:1,d:"Confirm you have REB approval to share the data (if applicable).",s:"um"},
+{id:"cite",t:"Citation and credits",r:1,d:"Credit, link and cite third-party sources, including data, code or software (if applicable).",s:"um"},
+{id:"org",t:"Dataset organization",d:"Use consistent file naming and folder structure. Files should be adequately named, or described in the README. Borealis displays files alphabetically or numerically by default.",s:"cum",l:["fs"]},
+{id:"fmt",t:"Sustainable file formats",d:"Make files accessible long-term and for re-use.",s:"um"},
+{id:"backup",t:"Back up using the 3-2-1 rule",d:"Keep 3 copies on 2 types of storage media, with 1 copy offsite. Check that cloud services store personal data in a Canadian data centre where required.",s:"c"}
+]},
+{h:"During deposit",items:[
+{id:"acct",t:"Create an account and start a new dataset",r:1,d:"Open your institution’s Dataverse, click “Log In”, then “Add Data” and “New Dataset”.",s:"um"},
+{id:"lic",t:"Select a data license",r:1,d:"Choose an open license under “Dataset Template”.",s:"um"},
+{id:"basic",t:"Add basic metadata",r:1,d:"Title, Author, Contact, Description and Subject.",s:"um"},
+{id:"kw",t:"Add at least 5 keywords",d:"High-level terms someone would type into a search for a dataset like yours. They drive findability in Odesi, Lunaris and Google Dataset Search.",s:"c"},
+{id:"pub",t:"Enter related publication(s)",r:1,d:"Minimum: title and journal.",s:"um"},
+{id:"time",t:"Time period and date of collection",d:"If applicable.",s:"um"},
+{id:"place",t:"Geospatial metadata",d:"If applicable.",s:"um"},
+{id:"orcid",t:"Add ORCiD or another researcher ID",d:"For yourself and your collaborators.",s:"um"},
+{id:"upload",t:"Upload your data files",r:1,d:"Under “Files”, click “+ Select Files to Add”. .zip files are unpacked automatically; zip the whole directory to keep your folder structure.",s:"um"},
+{id:"tags",t:"File names, descriptions and tags",d:"Edit file names, add text descriptions, and optionally tag files as “Data”, “Code” or “Documentation”.",s:"um"},
+{id:"save",t:"Save the dataset",r:1,d:"Click “Save Dataset” once everything is ready.",s:"um"},
+{id:"submit",t:"Submit for review",r:1,d:"Submit for review by the library’s data services team. At Carleton, review can take up to 3 business days in the Fall and Winter terms.",s:"cum"}
+]}];
+var NAMES={c:"MacOdrum Library",u:"UNBC Library",m:"McMaster Library"};
+var URLS={c:"https://library.carleton.ca/guides/help/preparing-data-deposit-or-storage",u:"https://libguides.unbc.ca/Borealis/DataPrep",m:"https://macsphere.mcmaster.ca/handle/11375/29866"};
+var TOOLS={repo:["Data Storage and Repository Finder","https://library.carleton.ca/find/data/data-storage"],rg:["README Generator","https://alpozturkcarleton.github.io/AlpTools/ReadMeGenerator.html"],fs:["Folder Structure Generator Tool","https://alpozturkcarleton.github.io/AlpTools/folder-structure-generatorv4.html"]};
+var KEY="deposit-checklist-v1",state={},hideDone=false;
+try{state=JSON.parse(localStorage.getItem(KEY)||"{}")||{}}catch(e){state={}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}}
+function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;")}
+function render(){
+  var out="",total=0,done=0;
+  SECTIONS.forEach(function(sec){
+    var rows="";
+    sec.items.forEach(function(it){
+      total++;var on=!!state[it.id];if(on)done++;
+      if(hideDone&&on)return;
+      var src=it.s.split("").map(function(k){return '<a href="'+URLS[k]+'" target="_blank" rel="noopener">'+NAMES[k]+'</a>'}).join(" · ");
+      var tl=(it.l||[]).map(function(k){return '<a class="tool" href="'+TOOLS[k][1]+'" target="_blank" rel="noopener">&#8599; '+TOOLS[k][0]+'</a>'}).join("");
+      rows+='<div class="item'+(on?' done':'')+'"><input type="checkbox" id="k_'+it.id+'" data-id="'+it.id+'"'+(on?' checked':'')+'><label for="k_'+it.id+'"><div class="t">'+(it.r?'<span class="req">*</span> ':'')+esc(it.t)+'</div><div class="d">'+esc(it.d)+'</div>'+(tl?'<div class="tools">'+tl+'</div>':'')+'<div class="src">Source: '+src+'</div></label></div>';
+    });
+    if(rows)out+='<h2>'+sec.h+'</h2>'+rows;
+  });
+  document.getElementById("list").innerHTML=out;
+  var p=total?Math.round(done/total*100):0,f=document.getElementById("fill");
+  f.style.width=p+"%";f.className=p===100?"full":"";
+  document.getElementById("count").textContent=done+" of "+total+" complete";
+  document.getElementById("pct").textContent=p+"%";
+}
+document.getElementById("list").addEventListener("change",function(e){
+  var id=e.target.getAttribute("data-id");if(!id)return;
+  state[id]=e.target.checked;save();render();
+});
+document.getElementById("hide").addEventListener("click",function(e){hideDone=!hideDone;e.target.classList.toggle("on",hideDone);e.target.textContent=hideDone?"Show completed":"Hide completed";render()});
+document.getElementById("print").addEventListener("click",function(){window.print()});
+document.getElementById("reset").addEventListener("click",function(){if(confirm("Clear all progress?")){state={};save();render()}});
+render();
+var downloadButton=document.getElementById("dl");
+downloadButton.hidden=false;
+downloadButton.addEventListener("click",function(){
+  var copy=document.documentElement.cloneNode(true);
+  copy.querySelector("#list").innerHTML="";
+  copy.querySelector("#dl").setAttribute("hidden","");
+  var file=new Blob(["<!DOCTYPE html>\n",copy.outerHTML],{type:"text/html;charset=utf-8"});
+  var url=URL.createObjectURL(file),link=document.createElement("a");
+  link.href=url;
+  link.download="data-deposit-checklist.html";
+  link.click();
+  setTimeout(function(){URL.revokeObjectURL(url)},0);
+});
+</script>
+</body>
+</html>
