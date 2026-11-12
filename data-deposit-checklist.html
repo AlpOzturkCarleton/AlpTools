@@ -126,9 +126,9 @@ var SECTIONS=[
 {id:"identify",t:"Identify your data and confirm it may be deposited",d:"Data can be spreadsheets, text, images, video or 3D models. Check that your research ethics clearance or data management plan allows sharing.",s:"c"},
 {id:"pi",t:"Confirm you are the PI, or have the PI’s permission",d:"If you are not the principal investigator, get permission to share and make sure they know the plan.",s:"c"},
 {id:"limits",t:"Check restrictions and requirements on sharing",d:"Grants, journal data policies, research networks, and legal, ethical or intellectual property limits. Note the data size (MB/GB/TB).",s:"c"},
-{id:"repo",t:"Choose the right repository",d:"Generalist repositories may need extra description and cleaned (not raw) data. Discipline-specific repositories have their own rules; try re3data.org or the Data Repository Navigator.",s:"c",l:["repo"]},
+{id:"repo",t:"Choose the right repository",d:"Generalist repositories may need extra description and cleaned (not raw) data. Discipline-specific repositories have their own rules; try re3data.org or the Data Storage and Repository Finder.",s:"c",l:["repo"]},
 {id:"readme",t:"README",r:1,d:"Develop a README to submit with the dataset. McMaster requires information equivalent to sections 1–3 of its template; UNBC requires its template as a starting point, and extra detail is welcome.",s:"cum",l:["rg"]},
-{id:"docs",t:"Gather documentation",d:"Data dictionary, data model, codebook, interview guide, lab notebooks, file naming conventions and collection methodology. Enough detail that users need not download the data to judge its relevance.",s:"cum",l:["rg"]},
+{id:"docs",t:"Gather documentation",d:"Data dictionary, data model, codebook, interview guide, lab notebooks, file naming conventions and collection methodology. Enough detail that users need not download the data to judge its relevance.",s:"cum",l:["cg"]},
 {id:"anon",t:"Anonymization / de-identification",r:1,d:"UNBC Borealis and McMaster Dataverse do not accept confidential or sensitive data. Remove, replace or redact until de-identified. CU Dataverse also requires full anonymization.",s:"cum"},
 {id:"ethics",t:"Ethics approval",r:1,d:"Confirm you have REB approval to share the data (if applicable).",s:"um"},
 {id:"cite",t:"Citation and credits",r:1,d:"Credit, link and cite third-party sources, including data, code or software (if applicable).",s:"um"},
@@ -140,8 +140,8 @@ var SECTIONS=[
 {id:"acct",t:"Create an account and start a new dataset",r:1,d:"Open your institution’s Dataverse, click “Log In”, then “Add Data” and “New Dataset”.",s:"um"},
 {id:"lic",t:"Select a data license",r:1,d:"Choose an open license under “Dataset Template”.",s:"um"},
 {id:"basic",t:"Add basic metadata",r:1,d:"Title, Author, Contact, Description and Subject.",s:"um"},
-{id:"kw",t:"Add at least 5 keywords",d:"High-level terms someone would type into a search for a dataset like yours. They drive findability in Odesi, Lunaris and Google Dataset Search.",s:"c"},
-{id:"pub",t:"Enter related publication(s)",r:1,d:"Minimum: title and journal.",s:"um"},
+{id:"kw",t:"Add at least 5 keywords",r:1, d:"High-level terms someone would type into a search for a dataset like yours. They drive findability in Odesi, Lunaris and Google Dataset Search.",s:"c"},
+{id:"pub",t:"Enter related publication(s)",d:"Minimum: title and journal.",s:"um"},
 {id:"time",t:"Time period and date of collection",d:"If applicable.",s:"um"},
 {id:"place",t:"Geospatial metadata",d:"If applicable.",s:"um"},
 {id:"orcid",t:"Add ORCiD or another researcher ID",d:"For yourself and your collaborators.",s:"um"},
@@ -152,7 +152,7 @@ var SECTIONS=[
 ]}];
 var NAMES={c:"MacOdrum Library",u:"UNBC Library",m:"McMaster Library"};
 var URLS={c:"https://library.carleton.ca/guides/help/preparing-data-deposit-or-storage",u:"https://libguides.unbc.ca/Borealis/DataPrep",m:"https://macsphere.mcmaster.ca/handle/11375/29866"};
-var TOOLS={repo:["Data Storage and Repository Finder","https://library.carleton.ca/find/data/data-storage"],rg:["README Generator","https://alpozturkcarleton.github.io/AlpTools/ReadMeGenerator.html"],fs:["Folder Structure Generator Tool","https://alpozturkcarleton.github.io/AlpTools/folder-structure-generatorv4.html"]};
+var TOOLS={repo:["Data Storage and Repository Finder","https://library.carleton.ca/find/data/data-storage"],rg:["README Generator","https://alpozturkcarleton.github.io/AlpTools/ReadMeGenerator.html"],fs:["Folder Structure Generator Tool","https://alpozturkcarleton.github.io/AlpTools/folder-structure-generatorv4.html"],cg:["Codebook Generator","https://alliance-rdm-gdr.github.io/RDM_Codebook_App/"]};
 var KEY="deposit-checklist-v1",state={},hideDone=false;
 try{state=JSON.parse(localStorage.getItem(KEY)||"{}")||{}}catch(e){state={}}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}}
