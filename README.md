@@ -31,4 +31,4 @@ Older versions of the records builder and folder structure generator.
 
   
 ## LICENSE
-CC-BY-4.0, open license page for more information. 
+MIT, Open LICENSE for more information. 
